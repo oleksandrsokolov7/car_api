@@ -1,5 +1,5 @@
 name: car_api
-description: "A new Flutter project."
+description: "Flutter project about car api."
 publish_to: 'none'
 version: 0.1.0
 
@@ -9,6 +9,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  http:
+  flutter_bloc:
+  intl:
+  sqflite:
+  path:
+  number_paginator: ^0.4.3
 
 dev_dependencies:
   flutter_test:
