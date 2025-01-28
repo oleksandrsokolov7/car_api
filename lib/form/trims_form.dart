@@ -1,3 +1,8 @@
+import 'package:car_api/crud/trim_crud.dart';
+import 'package:car_api/models/req_res.dart';
+import 'package:car_api/models/trim.dart';
+import 'package:flutter/material.dart';
+
 import 'package:car_api/block.dart';
 import 'package:car_api/constants.dart';
 import 'package:car_api/crud/model_car_crud.dart';
@@ -7,39 +12,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:number_paginator/number_paginator.dart';
 
-class CarModelsForm extends StatefulWidget {
-  const CarModelsForm({Key? key}) : super(key: key);
+class TrimsForm extends StatefulWidget {
+  const TrimsForm({Key? key}) : super(key: key);
 
   @override
-  _CarModelsFormState createState() => _CarModelsFormState();
+  _TrimsFormState createState() => _TrimsFormState();
 }
 
-class _CarModelsFormState extends State<CarModelsForm> {
-  int _currentPage = 0;
+class _TrimsFormState extends State<TrimsForm> {
   @override
   Widget build(BuildContext context) {
-    Widget central =
-        context.read<DataCubit>().getModelCarRequestRes.message.isEmpty
-            ? CircularProgressIndicator(
-                color: Colors.blue,
-              )
-            : Center(
-                child: GetCentralWidget(
-                    context.read<DataCubit>().getModelCarRequestRes),
-              );
+    Widget central = context.read<DataCubit>().getTrimReqRes.message.isEmpty
+        ? CircularProgressIndicator(
+            color: Colors.blue,
+          )
+        : Center(
+            child: GetCentralWidget(context.read<DataCubit>().getTrimReqRes),
+          );
 
-    if (context.read<DataCubit>().getModelCarRequestRes.status == 0) {
-      ModelCarCrud.getModelCar(
-              '1',
-              context.read<DataCubit>().getYearFilterModelCar,
-              context.read<DataCubit>().getMakesIdFilterModelCar)
-          .then(
+    if (context.read<DataCubit>().getTrimReqRes.status == 0) {
+      TrimCrud.getTrims('1', '2020', '0').then(
         (value) {
           print(value);
-          context.read<DataCubit>().setModelCarRequestRes(value);
+          context.read<DataCubit>().setTrimReqRes(value);
 
-          central =
-              GetCentralWidget(context.read<DataCubit>().getModelCarRequestRes);
+          central = GetCentralWidget(context.read<DataCubit>().getTrimReqRes);
 
           setState(() {});
         },
@@ -47,13 +44,11 @@ class _CarModelsFormState extends State<CarModelsForm> {
     }
 
     return Scaffold(
-      // key: _scaffoldKey,
       appBar: AppBar(
         leading: Builder(
           builder: (context) {
             return IconButton(
               onPressed: () {
-                print('on_press');
                 Scaffold.of(context).openDrawer();
               },
               icon: Icon(Icons.menu_rounded),
@@ -63,10 +58,11 @@ class _CarModelsFormState extends State<CarModelsForm> {
         backgroundColor: Colors.blue,
         centerTitle: true,
         title: Text(
-          'Car Models',
+          'Trims',
           style: txt30,
         ),
         // -----------  Actions start  -----------------
+        /*
         actions: <Widget>[
           PopupMenuButton<int>(
             onSelected: (item) {
@@ -158,54 +154,20 @@ class _CarModelsFormState extends State<CarModelsForm> {
             ],
           ),
         ],
-
+        */
         // -----------  Actions end  -----------------
       ),
       drawer: DrawerMenu(),
-
       body: BlocBuilder<DataCubit, Keeper>(builder: (context, state) {
         return Center(
           child: central,
         );
       }),
-      bottomNavigationBar: Card(
-        margin: EdgeInsets.zero,
-        elevation: 4,
-        child: NumberPaginator(
-          initialPage: _currentPage,
-          // by default, the paginator shows numbers as center content
-          numberPages:
-              context.read<DataCubit>().getModelCarRequestRes.pages_total,
-          onPageChange: (int index) {
-            setState(() {
-              _currentPage = index; // Обновление текущей страницы
-              ModelCarCrud.getModelCar(
-                      (index + 1).toString(),
-                      context.read<DataCubit>().getYearFilterModelCar,
-                      context.read<DataCubit>().getMakesIdFilterModelCar)
-                  .then(
-                (value) {
-                  print(value);
-
-                  setState(() {
-                    context.read<DataCubit>().setModelCarRequestRes(value);
-
-                    central = GetCentralWidget(
-                        context.read<DataCubit>().getModelCarRequestRes);
-                    _currentPage = 0;
-                  });
-                },
-              );
-              print('indes = $index');
-            });
-          },
-        ),
-      ),
     );
   }
 
-  //------  GetCentralWidget ----------------------------
-  Widget GetCentralWidget(ModelCarRequestRes result) {
+  //-------------------------  CentralWidget  ----------------------
+  Widget GetCentralWidget(ReqRes<Trim> result) {
     Widget central = Text(
       'No Data',
       style: txt15,

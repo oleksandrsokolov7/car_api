@@ -21,19 +21,10 @@ class _DrawerMenuState extends State<DrawerMenu> {
               ),
               child: Text('Menu'),
             ),
-            // const Divider(
-            //   color: Colors.black,
-            //   thickness: 1,
-            // ),
             ListTile(
               title: const Text('Makes'),
-              //  selected: _selectedIndex == 0,
               onTap: () {
                 Navigator.pushNamed(context, '/MakesForm');
-                // Update the state of the app
-                //  _onItemTapped(0);
-                // Then close the drawer
-                //
               },
             ),
             const Divider(
@@ -42,11 +33,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
             ),
             ListTile(
               title: const Text('Car Models'),
-              // selected: _selectedIndex == 0,
               onTap: () {
-                // Update the state of the app
-                //  _onItemTapped(0);
-                // Then close the drawer
                 Navigator.pushNamed(context, '/CarModelsForm');
               },
             ),
@@ -55,12 +42,18 @@ class _DrawerMenuState extends State<DrawerMenu> {
               thickness: 1,
             ),
             ListTile(
-              title: const Text('Cancel'),
-              // selected: _selectedIndex == 0,
+              title: const Text('Trims'),
               onTap: () {
-                // Update the state of the app
-                //  _onItemTapped(0);
-                // Then close the drawer
+                Navigator.pushNamed(context, '/TrimsForm');
+              },
+            ),
+            const Divider(
+              color: Colors.grey,
+              thickness: 1,
+            ),
+            ListTile(
+              title: const Text('Cancel'),
+              onTap: () {
                 Navigator.pop(context);
               },
             ),

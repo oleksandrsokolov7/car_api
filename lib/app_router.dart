@@ -2,6 +2,7 @@ import 'package:car_api/block.dart';
 import 'package:car_api/form/car_models_form.dart';
 import 'package:car_api/form/makes_form.dart';
 import 'package:car_api/form/makes_id_filter.dart';
+import 'package:car_api/form/trims_form.dart';
 import 'package:car_api/form/year_filter_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,6 +26,14 @@ class AppRouter {
           builder: (context) => BlocProvider.value(
             value: cubit,
             child: CarModelsForm(),
+          ),
+        );
+
+      case '/TrimsForm':
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider.value(
+            value: cubit,
+            child: TrimsForm(),
           ),
         );
 
