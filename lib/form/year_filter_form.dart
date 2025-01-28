@@ -29,6 +29,7 @@ class _YearFilterFormState extends State<YearFilterForm> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         centerTitle: true,
         backgroundColor: Colors.blue,
         title: Text(
@@ -54,18 +55,6 @@ class _YearFilterFormState extends State<YearFilterForm> {
                           });
                         });
                   },
-
-                  //   return RadioListTile<String>(
-                  //     title: Text(listYear[index]),
-                  //     value: listYear[index],
-                  //     onChanged: (value) {
-                  //       setState(() {
-                  //         groupValue = value!;
-                  //       });
-                  //     },
-                  //     groupValue: groupValue,
-                  //   );
-                  // },
                   separatorBuilder: (context, index) => const Divider(
                         color: Colors.black,
                         thickness: 1,

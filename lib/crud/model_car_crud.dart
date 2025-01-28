@@ -26,7 +26,7 @@ class ModelCarCrud {
         'page': page_number
       };
 
-      if (make_id.trim().isNotEmpty) {
+      if (make_id.trim().isNotEmpty && make_id.trim() != '0') {
         query_param.addAll({'make_id': make_id});
       }
 

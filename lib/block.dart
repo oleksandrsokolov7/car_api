@@ -6,7 +6,7 @@ class Keeper {
   MakesRequestRes makesRequestRes = MakesRequestRes.empty();
   ModelCarRequestRes modelCarRequestRes = ModelCarRequestRes.empty();
   String year_filter_model_car = '2020';
-  String makes_id_filter_model_car = '';
+  String makes_id_filter_model_car = '0';
 }
 
 class DataCubit extends Cubit<Keeper> {

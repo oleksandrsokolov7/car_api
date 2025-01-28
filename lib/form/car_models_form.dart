@@ -16,6 +16,7 @@ class CarModelsForm extends StatefulWidget {
 
 class _CarModelsFormState extends State<CarModelsForm> {
   // final _scaffoldKey = GlobalKey<ScaffoldState>();
+  int _currentPage = 0;
   @override
   Widget build(BuildContext context) {
     Widget central =
@@ -89,12 +90,41 @@ class _CarModelsFormState extends State<CarModelsForm> {
                             context.read<DataCubit>().getMakesIdFilterModelCar)
                         .then((val) {
                       context.read<DataCubit>().setModelCarRequestRes(val);
+
                       setState(() {});
                     });
                   }
                 });
               } else if (item == 1) {
-                print('not realized');
+                //  MakesIdFilter
+                print('MakesIdFilter');
+                Navigator.pushNamed(context, '/MakesIdFilter',
+                        arguments:
+                            context.read<DataCubit>().getMakesIdFilterModelCar)
+                    .then((values) {
+                  if (values != null && values.toString().trim().isNotEmpty) {
+                    if (values != null) {
+                      context
+                          .read<DataCubit>()
+                          .setMakesIdFilterModelCar(values.toString());
+
+                      ModelCarCrud.getModelCar(
+                              '1',
+                              context.read<DataCubit>().getYearFilterModelCar,
+                              context
+                                  .read<DataCubit>()
+                                  .getMakesIdFilterModelCar)
+                          .then((val) {
+                        context.read<DataCubit>().setModelCarRequestRes(val);
+
+                        setState(() {});
+                      });
+                    }
+                  }
+
+                  print(values);
+                  int h3 = 3;
+                });
               }
             },
             itemBuilder: (context) => [
@@ -143,11 +173,13 @@ class _CarModelsFormState extends State<CarModelsForm> {
         margin: EdgeInsets.zero,
         elevation: 4,
         child: NumberPaginator(
+          initialPage: _currentPage,
           // by default, the paginator shows numbers as center content
           numberPages:
               context.read<DataCubit>().getModelCarRequestRes.pages_total,
           onPageChange: (int index) {
             setState(() {
+              _currentPage = index; // Обновление текущей страницы
               ModelCarCrud.getModelCar(
                       (index + 1).toString(),
                       context.read<DataCubit>().getYearFilterModelCar,
@@ -155,15 +187,16 @@ class _CarModelsFormState extends State<CarModelsForm> {
                   .then(
                 (value) {
                   print(value);
-                  context.read<DataCubit>().setModelCarRequestRes(value);
 
-                  central = GetCentralWidget(
-                      context.read<DataCubit>().getModelCarRequestRes);
+                  setState(() {
+                    context.read<DataCubit>().setModelCarRequestRes(value);
 
-                  setState(() {});
+                    central = GetCentralWidget(
+                        context.read<DataCubit>().getModelCarRequestRes);
+                    _currentPage = 0;
+                  });
                 },
               );
-
               print('indes = $index');
             });
           },
