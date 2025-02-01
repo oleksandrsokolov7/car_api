@@ -1,18 +1,37 @@
+import 'package:car_api/models/body.dart';
+import 'package:car_api/models/engine.dart';
 import 'package:car_api/models/makes_res.dart';
-import 'package:car_api/models/model_car_res.dart';
+import 'package:car_api/models/model_car.dart';
 import 'package:car_api/models/req_res.dart';
 import 'package:car_api/models/trim.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Keeper {
   MakesRequestRes makesRequestRes = MakesRequestRes.empty();
-  ModelCarRequestRes modelCarRequestRes = ModelCarRequestRes.empty();
+  ReqRes<ModelCar> modelCarRequestRes = ReqRes<ModelCar>.empty();
   ReqRes<Trim> trimReqRes = ReqRes<Trim>.empty();
-  String year_filter_model_car = '2020';
-  String makes_id_filter_model_car = '0';
+  ReqRes<Engine> engineReqRes = ReqRes<Engine>.empty();
+  ReqRes<Body> bodyReqRes = ReqRes<Body>.empty();
+  String year_filter = '2020';
+  String makes_id_filter = '0';
 }
 
 class DataCubit extends Cubit<Keeper> {
+  ReqRes<Body> get getBodyReqRes => state.bodyReqRes;
+
+  setBodyReqRes(ReqRes<Body> NewTrimReqRes) {
+    state.bodyReqRes = NewTrimReqRes;
+  }
+
+  //---------------------------------------
+  ReqRes<Engine> get getEngineReqRes => state.engineReqRes;
+
+  setEngineReqRes(ReqRes<Engine> NewTrimReqRes) {
+    state.engineReqRes = NewTrimReqRes;
+  }
+
+  //------------------------------------------------------------------
+
   ReqRes<Trim> get getTrimReqRes => state.trimReqRes;
 
   setTrimReqRes(ReqRes<Trim> NewTrimReqRes) {
@@ -20,17 +39,17 @@ class DataCubit extends Cubit<Keeper> {
   }
 
   //------------------------------------------------------------------
-  String get getYearFilterModelCar => state.year_filter_model_car;
+  String get getYearFilter => state.year_filter;
 
-  setYearFilterModelCar(String newValue) {
-    state.year_filter_model_car = newValue;
+  setYearFilter(String newValue) {
+    state.year_filter = newValue;
   }
 
   //-------------------------------------------
-  String get getMakesIdFilterModelCar => state.makes_id_filter_model_car;
+  String get getMakesIdFilter => state.makes_id_filter;
 
-  setMakesIdFilterModelCar(String newValue) {
-    state.makes_id_filter_model_car = newValue;
+  setMakesIdFilter(String newValue) {
+    state.makes_id_filter = newValue;
   }
 
   //-------------------------------------------
@@ -40,9 +59,9 @@ class DataCubit extends Cubit<Keeper> {
     state.makesRequestRes = result;
   }
 
-  ModelCarRequestRes get getModelCarRequestRes => state.modelCarRequestRes;
+  ReqRes<ModelCar> get getModelCarRequestRes => state.modelCarRequestRes;
 
-  setModelCarRequestRes(ModelCarRequestRes result) {
+  setModelCarRequestRes(ReqRes<ModelCar> result) {
     state.modelCarRequestRes = result;
   }
 

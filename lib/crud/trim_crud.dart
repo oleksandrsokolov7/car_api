@@ -1,12 +1,11 @@
-import 'package:car_api/constants.dart';
-import 'package:car_api/models/makes.dart';
-import 'package:car_api/models/makes_res.dart';
-import 'package:car_api/models/req_res.dart';
 import 'package:car_api/models/trim.dart';
-
+import 'package:car_api/models/makes.dart';
+//---------------------------------------------------------
+import 'package:car_api/constants.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
+import 'package:car_api/models/req_res.dart';
 
 class TrimCrud {
   static Future<ReqRes<Trim>> getTrims(

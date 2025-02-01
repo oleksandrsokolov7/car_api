@@ -52,6 +52,26 @@ class _DrawerMenuState extends State<DrawerMenu> {
               thickness: 1,
             ),
             ListTile(
+              title: const Text('Engine'),
+              onTap: () {
+                Navigator.pushNamed(context, '/EngineForm');
+              },
+            ),
+            const Divider(
+              color: Colors.grey,
+              thickness: 1,
+            ),
+            ListTile(
+              title: const Text('Body'),
+              onTap: () {
+                Navigator.pushNamed(context, '/BodyForm');
+              },
+            ),
+            const Divider(
+              color: Colors.grey,
+              thickness: 1,
+            ),
+            ListTile(
               title: const Text('Cancel'),
               onTap: () {
                 Navigator.pop(context);

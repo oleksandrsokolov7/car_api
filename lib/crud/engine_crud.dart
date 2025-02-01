@@ -1,16 +1,14 @@
 import 'package:car_api/constants.dart';
-import 'package:car_api/models/model_car.dart';
-
-import 'package:car_api/models/req_res.dart';
-
+import 'package:car_api/models/engine.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
+import 'package:car_api/models/req_res.dart';
 
-class ModelCarCrud {
-  static Future<ReqRes<ModelCar>> getModelCar(
+class EngineCrud {
+  static Future<ReqRes<Engine>> getEngines(
       String page_number, String year, String make_id) async {
-    ReqRes<ModelCar> result = ReqRes<ModelCar>.empty();
+    ReqRes<Engine> result = ReqRes<Engine>.empty();
 
     try {
       var headers = {
@@ -31,12 +29,10 @@ class ModelCarCrud {
         query_param.addAll({'make_id': make_id});
       }
 
-      int h = 0;
-
       var response = await http.get(
           Uri.https(
             host,
-            '/api/models',
+            '/api/engines',
             query_param,
           ),
           headers: headers);
@@ -56,13 +52,17 @@ class ModelCarCrud {
 
         print(body);
 
-        List<dynamic> listModelCar = body['data'] as List<dynamic>;
+        List<dynamic> listEngine = body['data'] as List<dynamic>;
         int h2 = 0;
-        List<ModelCar> list = [];
+        List<Engine> list = [];
 
-        listModelCar.forEach((dynamic map) {
-          ModelCar modelCar = ModelCar.fromJson(map);
-          list.add(modelCar);
+        listEngine.forEach((dynamic map) {
+          try {
+            Engine engine = Engine.fromJson(map);
+            list.add(engine);
+          } catch (e) {
+            print(e);
+          }
         });
 
         result.list = list;

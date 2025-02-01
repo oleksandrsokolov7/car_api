@@ -1,5 +1,7 @@
 import 'package:car_api/block.dart';
+import 'package:car_api/form/body_form.dart';
 import 'package:car_api/form/car_models_form.dart';
+import 'package:car_api/form/engine_form.dart';
 import 'package:car_api/form/makes_form.dart';
 import 'package:car_api/form/makes_id_filter.dart';
 import 'package:car_api/form/trims_form.dart';
@@ -37,6 +39,22 @@ class AppRouter {
           ),
         );
 
+      case '/EngineForm':
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider.value(
+            value: cubit,
+            child: EngineForm(),
+          ),
+        );
+
+      case '/BodyForm':
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider.value(
+            value: cubit,
+            child: BodyForm(),
+          ),
+        );
+
       //  YearFilterForm
       case '/YearFilterForm':
         final String _year = routeSettings.arguments as String;
@@ -60,7 +78,7 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (context) => BlocProvider.value(
             value: cubit,
-            child: CarModelsForm(),
+            child: BodyForm(),
           ),
         );
     }

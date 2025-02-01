@@ -1,45 +1,41 @@
-import 'package:car_api/crud/trim_crud.dart';
-import 'package:car_api/models/req_res.dart';
-import 'package:car_api/models/trim.dart';
-import 'package:flutter/material.dart';
-
-import 'package:car_api/block.dart';
 import 'package:car_api/constants.dart';
-import 'package:car_api/crud/model_car_crud.dart';
-
+import 'package:car_api/crud/engine_crud.dart';
+import 'package:car_api/models/engine.dart';
+import 'package:car_api/models/req_res.dart';
 import 'package:car_api/widget/drawer_menu.dart';
 import 'package:flutter/material.dart';
+import 'package:car_api/block.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:number_paginator/number_paginator.dart';
 
-class TrimsForm extends StatefulWidget {
-  const TrimsForm({Key? key}) : super(key: key);
+class EngineForm extends StatefulWidget {
+  const EngineForm({Key? key}) : super(key: key);
 
   @override
-  _TrimsFormState createState() => _TrimsFormState();
+  _EngineFormState createState() => _EngineFormState();
 }
 
-class _TrimsFormState extends State<TrimsForm> {
+class _EngineFormState extends State<EngineForm> {
   int _currentPage = 0; // Переменная для хранения текущей страницы
   UniqueKey _paginatorKey = UniqueKey();
 
   @override
   Widget build(BuildContext context) {
-    Widget central = context.read<DataCubit>().getTrimReqRes.message.isEmpty
+    Widget central = context.read<DataCubit>().getEngineReqRes.message.isEmpty
         ? CircularProgressIndicator(
             color: Colors.blue,
           )
         : Center(
-            child: GetCentralWidget(context.read<DataCubit>().getTrimReqRes),
+            child: GetCentralWidget(context.read<DataCubit>().getEngineReqRes),
           );
 
-    if (context.read<DataCubit>().getTrimReqRes.status == 0) {
-      TrimCrud.getTrims('1', '2020', '0').then(
+    if (context.read<DataCubit>().getEngineReqRes.status == 0) {
+      EngineCrud.getEngines('1', '2020', '0').then(
         (value) {
           print(value);
-          context.read<DataCubit>().setTrimReqRes(value);
+          context.read<DataCubit>().setEngineReqRes(value);
 
-          central = GetCentralWidget(context.read<DataCubit>().getTrimReqRes);
+          central = GetCentralWidget(context.read<DataCubit>().getEngineReqRes);
 
           setState(() {});
         },
@@ -61,7 +57,7 @@ class _TrimsFormState extends State<TrimsForm> {
         backgroundColor: Colors.blue,
         centerTitle: true,
         title: Text(
-          'Trims',
+          'Engines',
           style: txt30,
         ),
         // -----------  Actions start  -----------------
@@ -80,12 +76,12 @@ class _TrimsFormState extends State<TrimsForm> {
                     int g5 = 5;
                     context.read<DataCubit>().setYearFilter(value.toString());
 
-                    TrimCrud.getTrims(
+                    EngineCrud.getEngines(
                             '1',
                             context.read<DataCubit>().getYearFilter,
                             context.read<DataCubit>().getMakesIdFilter)
                         .then((val) {
-                      context.read<DataCubit>().setTrimReqRes(val);
+                      context.read<DataCubit>().setEngineReqRes(val);
 
                       setState(() {
                         _currentPage = 0;
@@ -106,12 +102,12 @@ class _TrimsFormState extends State<TrimsForm> {
                           .read<DataCubit>()
                           .setMakesIdFilter(values.toString());
 
-                      TrimCrud.getTrims(
+                      EngineCrud.getEngines(
                               '1',
                               context.read<DataCubit>().getYearFilter,
                               context.read<DataCubit>().getMakesIdFilter)
                           .then((val) {
-                        context.read<DataCubit>().setTrimReqRes(val);
+                        context.read<DataCubit>().setEngineReqRes(val);
 
                         setState(() {
                           _currentPage = 0;
@@ -174,11 +170,11 @@ class _TrimsFormState extends State<TrimsForm> {
           key: _paginatorKey,
           initialPage: _currentPage,
           // by default, the paginator shows numbers as center content
-          numberPages: context.read<DataCubit>().getTrimReqRes.pages_total,
+          numberPages: context.read<DataCubit>().getEngineReqRes.pages_total,
           onPageChange: (int index) {
             setState(() {
               _currentPage = index; // Обновление текущей страницы
-              TrimCrud.getTrims(
+              EngineCrud.getEngines(
                       (index + 1).toString(),
                       context.read<DataCubit>().getYearFilter,
                       context.read<DataCubit>().getMakesIdFilter)
@@ -187,10 +183,10 @@ class _TrimsFormState extends State<TrimsForm> {
                   print(value);
 
                   setState(() {
-                    context.read<DataCubit>().setTrimReqRes(value);
+                    context.read<DataCubit>().setEngineReqRes(value);
 
                     central = GetCentralWidget(
-                        context.read<DataCubit>().getTrimReqRes);
+                        context.read<DataCubit>().getEngineReqRes);
                     _currentPage = 0;
                   });
                 },
@@ -204,7 +200,7 @@ class _TrimsFormState extends State<TrimsForm> {
   }
 
   //-------------------------  CentralWidget  ----------------------
-  Widget GetCentralWidget(ReqRes<Trim> result) {
+  Widget GetCentralWidget(ReqRes<Engine> result) {
     Widget central = Text(
       'No Data',
       style: txt15,
@@ -237,43 +233,111 @@ class _TrimsFormState extends State<TrimsForm> {
         itemCount: result.list.length,
         itemBuilder: (context, index) {
           return ExpansionTile(
-            title: Text("${result.list[index].name} "),
+            title: Text(
+                "${result.list[index].trim.make_name}  ${result.list[index].trim.model_name} "),
             children: [
               ListTile(
                 title: Text(
-                  'makers: ${result.list[index].make_name}',
+                  'engine_type: ${result.list[index].engine_type}',
                   style: txt15,
                 ),
               ),
               ListTile(
                 title: Text(
-                  'model: ${result.list[index].model_name}',
+                  'fuel_type: ${result.list[index].fuel_type}',
                   style: txt15,
                 ),
               ),
               ListTile(
                 title: Text(
-                  'description: ${result.list[index].description}',
+                  'cylinders: ${result.list[index].cylinders}',
                   style: txt15,
                 ),
               ),
               ListTile(
                 title: Text(
-                  'year: ${result.list[index].year}',
+                  'horsepower_hp: ${result.list[index].horsepower_hp}',
                   style: txt15,
                 ),
               ),
               ListTile(
                 title: Text(
-                  'msrp: ${result.list[index].msrp}',
+                  'horsepower_rpm: ${result.list[index].horsepower_rpm}',
                   style: txt15,
                 ),
               ),
               ListTile(
                 title: Text(
-                  'invoice: ${result.list[index].invoice}',
+                  'torque_ft_lbs: ${result.list[index].torque_ft_lbs}',
                   style: txt15,
                 ),
+              ),
+              ListTile(
+                title: Text(
+                  'torque_rpm: ${result.list[index].torque_rpm}',
+                  style: txt15,
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  'valves: ${result.list[index].valves}',
+                  style: txt15,
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  'valve_timing: ${result.list[index].valve_timing}',
+                  style: txt15,
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  'cam_type: ${result.list[index].cam_type}',
+                  style: txt15,
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  'drive_type: ${result.list[index].drive_type}',
+                  style: txt15,
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  'transmission: ${result.list[index].transmission}',
+                  style: txt15,
+                ),
+              ),
+              ExpansionTile(
+                title: Text('Trim: ${result.list[index].trim.name}'),
+                subtitle: Text(
+                    "${result.list[index].trim.make_name}  ${result.list[index].trim.model_name} "),
+                children: [
+                  ListTile(
+                    title: Text(
+                      'year: ${result.list[index].trim.year}',
+                      style: txt15,
+                    ),
+                  ),
+                  ListTile(
+                    title: Text(
+                      'description: ${result.list[index].trim.description}',
+                      style: txt15,
+                    ),
+                  ),
+                  ListTile(
+                    title: Text(
+                      'msrp: ${result.list[index].trim.msrp}',
+                      style: txt15,
+                    ),
+                  ),
+                  ListTile(
+                    title: Text(
+                      'invoice: ${result.list[index].trim.invoice}',
+                      style: txt15,
+                    ),
+                  ),
+                ],
               ),
             ],
           );
