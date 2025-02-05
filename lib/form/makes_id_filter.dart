@@ -1,4 +1,4 @@
-import 'package:car_api/block.dart';
+import 'package:car_api/bloc/block.dart';
 import 'package:car_api/constants.dart';
 import 'package:car_api/crud/makes_crud.dart';
 import 'package:car_api/models/makes.dart';
@@ -130,13 +130,13 @@ class _MakesIdFilterState extends State<MakesIdFilter> {
                 children: [
                   Container(
                     width: 150,
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(25.0),
-                      ),
-                    ),
-                    child: TextButton(
+                    // decoration: BoxDecoration(
+                    //   color: Colors.blue,
+                    //   borderRadius: BorderRadius.all(
+                    //     Radius.circular(25.0),
+                    //   ),
+                    // ),
+                    child: ElevatedButton(
                         onPressed: () {
                           print(widget.makerId);
                           Navigator.pop(context, widget.makerId);
@@ -145,13 +145,13 @@ class _MakesIdFilterState extends State<MakesIdFilter> {
                   ),
                   Container(
                     width: 150,
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(25.0),
-                      ),
-                    ),
-                    child: TextButton(
+                    // decoration: BoxDecoration(
+                    //   color: Colors.blue,
+                    //   borderRadius: BorderRadius.all(
+                    //     Radius.circular(25.0),
+                    //   ),
+                    // ),
+                    child: ElevatedButton(
                       onPressed: () {
                         print('Cancel');
                         Navigator.pop(context, null);

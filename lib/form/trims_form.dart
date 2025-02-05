@@ -3,7 +3,7 @@ import 'package:car_api/models/req_res.dart';
 import 'package:car_api/models/trim.dart';
 import 'package:flutter/material.dart';
 
-import 'package:car_api/block.dart';
+import 'package:car_api/bloc/block.dart';
 import 'package:car_api/constants.dart';
 import 'package:car_api/crud/model_car_crud.dart';
 

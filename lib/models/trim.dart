@@ -23,6 +23,17 @@ class Trim {
         make_id = json['make_model']['make_id'] as int,
         make_name = json['make_model']['make']['name'] as String;
 
+  static List<Trim> fromListJson(List<dynamic> listJson) {
+    List<Trim> listTrim = [];
+
+    listJson.forEach((value) {
+      Trim trim = Trim.fromJson(value);
+      listTrim.add(trim);
+    });
+
+    return listTrim;
+  }
+
   Trim(this.id, this.make_model_id, this.year, this.name, this.description,
       this.msrp, this.invoice, this.model_name, this.make_id, this.make_name);
 

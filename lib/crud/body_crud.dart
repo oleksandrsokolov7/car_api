@@ -58,8 +58,8 @@ class BodyCrud {
 
         listBody.forEach((dynamic map) {
           try {
-            Body engine = Body.fromJson(map);
-            list.add(engine);
+            Body model = Body.fromJson(map);
+            list.add(model);
           } catch (e) {
             print(e);
           }

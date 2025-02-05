@@ -72,6 +72,29 @@ class _DrawerMenuState extends State<DrawerMenu> {
               thickness: 1,
             ),
             ListTile(
+              title: const Text('Vin Model'),
+              onTap: () {
+                Navigator.pushNamed(context, '/VinModelForm');
+              },
+            ),
+            const Divider(
+              color: Colors.grey,
+              thickness: 1,
+            ),
+
+            ListTile(
+              title: const Text('Setting'),
+              onTap: () {
+                Navigator.pushNamed(context, '/SettingsPage');
+              },
+            ),
+            const Divider(
+              color: Colors.grey,
+              thickness: 1,
+            ),
+            //
+
+            ListTile(
               title: const Text('Cancel'),
               onTap: () {
                 Navigator.pop(context);

@@ -1,9 +1,12 @@
+import 'package:car_api/constants.dart';
 import 'package:car_api/models/body.dart';
 import 'package:car_api/models/engine.dart';
 import 'package:car_api/models/makes_res.dart';
 import 'package:car_api/models/model_car.dart';
 import 'package:car_api/models/req_res.dart';
 import 'package:car_api/models/trim.dart';
+import 'package:car_api/models/vin_model.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Keeper {
@@ -12,11 +15,29 @@ class Keeper {
   ReqRes<Trim> trimReqRes = ReqRes<Trim>.empty();
   ReqRes<Engine> engineReqRes = ReqRes<Engine>.empty();
   ReqRes<Body> bodyReqRes = ReqRes<Body>.empty();
+  ReqRes<VinModel> vinReqRes = ReqRes<VinModel>.empty();
   String year_filter = '2020';
   String makes_id_filter = '0';
+  bool isDarkTheme = false;
 }
 
 class DataCubit extends Cubit<Keeper> {
+  DataCubit(super.initialState);
+  //--------------------------------------
+  bool get getIsDarkTheme => state.isDarkTheme;
+
+  void setIsDarkTheme(bool newIsDarkTheme) {
+    state.isDarkTheme = newIsDarkTheme;
+  }
+
+  //-----------------------------------------------
+  ReqRes<VinModel> get getVinModelReqRes => state.vinReqRes;
+
+  setVinModelReqRes(ReqRes<VinModel> vinReqRes) {
+    state.vinReqRes = vinReqRes;
+  }
+
+  //---------------------------------------
   ReqRes<Body> get getBodyReqRes => state.bodyReqRes;
 
   setBodyReqRes(ReqRes<Body> NewTrimReqRes) {
@@ -64,6 +85,4 @@ class DataCubit extends Cubit<Keeper> {
   setModelCarRequestRes(ReqRes<ModelCar> result) {
     state.modelCarRequestRes = result;
   }
-
-  DataCubit(super.initState);
 }

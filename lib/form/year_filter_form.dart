@@ -68,13 +68,7 @@ class _YearFilterFormState extends State<YearFilterForm> {
                   children: [
                     Container(
                       width: 150,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(25.0),
-                        ),
-                      ),
-                      child: TextButton(
+                      child: ElevatedButton(
                           onPressed: () {
                             print(widget.year);
                             Navigator.pop(context, widget.year);
@@ -83,13 +77,7 @@ class _YearFilterFormState extends State<YearFilterForm> {
                     ),
                     Container(
                       width: 150,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(25.0),
-                        ),
-                      ),
-                      child: TextButton(
+                      child: ElevatedButton(
                           onPressed: () {
                             print('Cancel');
                             Navigator.pop(context, null);
