@@ -1,4 +1,3 @@
-import 'package:car_api/constants.dart';
 import 'package:car_api/models/body.dart';
 import 'package:car_api/models/engine.dart';
 import 'package:car_api/models/makes_res.dart';
@@ -6,7 +5,6 @@ import 'package:car_api/models/model_car.dart';
 import 'package:car_api/models/req_res.dart';
 import 'package:car_api/models/trim.dart';
 import 'package:car_api/models/vin_model.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Keeper {

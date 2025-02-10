@@ -5,6 +5,8 @@ import 'package:car_api/models/makes_res.dart';
 import 'package:car_api/widget/drawer_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:car_api/models/makes.dart';
+import 'package:collection/src/iterable_extensions.dart';
 
 class MakesForm extends StatefulWidget {
   const MakesForm({Key? key}) : super(key: key);
@@ -94,6 +96,19 @@ class _MakesFormState extends State<MakesForm> {
         );
       }
     } else {
+      Makes noneMakes = Makes(0, 'None');
+
+      var exist =
+          result.list.firstWhereOrNull((item) => item.id == noneMakes.id);
+
+      if (exist != null) {
+        result.list.remove(exist);
+      }
+
+      for (int i = 0; i < result.list.length; i++) {
+        print(result.list[i].name);
+      }
+      int y = 0;
       central = ListView.separated(
         separatorBuilder: (context, index) => const Divider(
           color: Colors.black,
