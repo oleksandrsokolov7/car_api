@@ -8,6 +8,77 @@ import 'dart:async';
 
 class MakesCrud {
   static Future<MakesRequestRes> getMakes() async {
+    List<String> icons = [
+      'Acura',
+      'Alfa Romeo',
+      'AM General',
+      'Aston Martin',
+      'Audi',
+      'Bentley',
+      'BMW',
+      'Bugatti',
+      'Buick',
+      'Cadillac',
+      'Chevrolet',
+      'Chrysler',
+      'Daewoo',
+      'Dodge',
+      'Eagle',
+      'Ferrari',
+      'FIAT',
+      'Fisker',
+      'Ford',
+      'Genesis',
+      'Geo',
+      'GMC',
+      'Honda',
+      'HUMMER',
+      'Hyundai',
+      'INEOS',
+      'INFINITI',
+      'Isuzu',
+      'Jaguar',
+      'Jeep',
+      'Karma',
+      'Kia',
+      'Lamborghini',
+      'Land Rover',
+      'Lexus',
+      'Lincoln',
+      'Lotus',
+      'Lucid',
+      'Maserati',
+      'Maybach',
+      'Mazda',
+      'McLaren',
+      'Mercedes-Benz',
+      'Mercury',
+      'MINI',
+      'Mitsubishi',
+      'Nissan',
+      'Oldsmobile',
+      'Panoz',
+      'Plymouth',
+      'Polestar',
+      'Pontiac',
+      'Porsche',
+      'Ram',
+      'Rivian',
+      'Rolls-Royce',
+      'Saab',
+      'Saturn',
+      'Scion',
+      'smart',
+      'Spyker',
+      'Subaru',
+      'Suzuki',
+      'Tesla',
+      'Toyota',
+      'VinFast',
+      'Volkswagen',
+      'Volvo'
+    ];
+
     MakesRequestRes result = MakesRequestRes.empty();
 
     try {
@@ -36,6 +107,11 @@ class MakesCrud {
 
         listMakes.forEach((dynamic map) {
           Makes makes = Makes.fromJson(map);
+
+          if (icons.contains(makes.name)) {
+            makes.picture = makes.name + '.svg';
+          }
+
           list.add(makes);
         });
 

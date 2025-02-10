@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 
 final ThemeData lightTheme = ThemeData(
+  hoverColor: Colors.white,
   brightness: Brightness.light,
   primaryColor: Colors.black,
   scaffoldBackgroundColor: Colors.white,
@@ -42,8 +43,9 @@ final ThemeData lightTheme = ThemeData(
 );
 
 final ThemeData darkTheme = ThemeData(
+  hoverColor: Colors.grey[800],
   brightness: Brightness.dark,
-  primaryColor: Colors.white,
+  primaryColor: Colors.black,
   scaffoldBackgroundColor: Colors.grey[800],
   appBarTheme: AppBarTheme(
     color: Colors.indigo,
@@ -77,6 +79,7 @@ final ThemeData darkTheme = ThemeData(
 
 //------------- customLightTheme  -----------------------------
 final ThemeData customLightTheme = lightTheme.copyWith(
+  hoverColor: Colors.white,
   brightness: Brightness.light,
   primaryColor: Colors.black,
   scaffoldBackgroundColor: Colors.white,
@@ -103,6 +106,7 @@ final ThemeData customLightTheme = lightTheme.copyWith(
 
 //------------- customDarkTheme -------------------------------------
 final ThemeData customDarkTheme = darkTheme.copyWith(
+  hoverColor: Colors.black,
   brightness: Brightness.dark,
   primaryColor: Colors.white,
   scaffoldBackgroundColor: Colors.black,

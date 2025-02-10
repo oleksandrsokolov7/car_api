@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:collection/src/iterable_extensions.dart';
+import 'package:flutter_svg/svg.dart';
 
 class MakesIdFilter extends StatefulWidget {
   MakesIdFilter({Key? key, required this.makerId}) : super(key: key);
@@ -85,7 +86,7 @@ class _MakesIdFilterState extends State<MakesIdFilter> {
         );
       }
     } else {
-      Makes noneMakes = Makes(0, 'None');
+      Makes noneMakes = Makes(0, 'None', '');
 
       var exist =
           result.list.firstWhereOrNull((item) => item.id == noneMakes.id);
@@ -106,6 +107,16 @@ class _MakesIdFilterState extends State<MakesIdFilter> {
               itemCount: result.list.length,
               itemBuilder: (context, index) {
                 return RadioMenuButton(
+                  trailingIcon: CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Theme.of(context).hoverColor,
+                    child: result.list[index].picture.isNotEmpty
+                        ? SvgPicture.asset(
+                            'assets/icons/${result.list[index].picture}',
+                            fit: BoxFit.cover,
+                          )
+                        : Container(),
+                  ),
                   child: Text(result.list[index].name),
                   value: result.list[index].id.toString(),
                   groupValue: widget.makerId,

@@ -1,4 +1,5 @@
 import 'package:car_api/bloc/block.dart';
+import 'package:car_api/bloc/theme_bloc.dart';
 import 'package:car_api/constants.dart';
 import 'package:car_api/crud/makes_crud.dart';
 import 'package:car_api/models/makes_res.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:car_api/models/makes.dart';
 import 'package:collection/src/iterable_extensions.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class MakesForm extends StatefulWidget {
   const MakesForm({Key? key}) : super(key: key);
@@ -96,19 +98,8 @@ class _MakesFormState extends State<MakesForm> {
         );
       }
     } else {
-      Makes noneMakes = Makes(0, 'None');
+      result.list.removeWhere((item) => item.id == 0);
 
-      var exist =
-          result.list.firstWhereOrNull((item) => item.id == noneMakes.id);
-
-      if (exist != null) {
-        result.list.remove(exist);
-      }
-
-      for (int i = 0; i < result.list.length; i++) {
-        print(result.list[i].name);
-      }
-      int y = 0;
       central = ListView.separated(
         separatorBuilder: (context, index) => const Divider(
           color: Colors.black,
@@ -121,11 +112,18 @@ class _MakesFormState extends State<MakesForm> {
               padding: const EdgeInsets.all(4.0),
               child: CircleAvatar(
                 radius: 20,
-                backgroundColor: Colors.blue,
-                child: Text(
-                  '${result.list[index].id}',
-                  style: txt15,
-                ),
+                backgroundColor: Theme.of(context).hoverColor,
+                child: result.list[index].picture.isNotEmpty
+                    ? SvgPicture.asset(
+                        'assets/icons/${result.list[index].picture}',
+                        fit: BoxFit.cover, // Настройка под размер аватара
+                      )
+                    : Container(),
+
+                // Text(
+                //     '${result.list[index].id}',
+                //     style: txt15,
+                //   ),
               ),
             ),
             // leading: Text(
