@@ -7,6 +7,7 @@ import 'package:car_api/widget/alert_dialog.dart';
 import 'package:car_api/widget/drawer_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class VinModelForm extends StatefulWidget {
   const VinModelForm({Key? key}) : super(key: key);
@@ -16,7 +17,6 @@ class VinModelForm extends StatefulWidget {
 }
 
 class _VinModelFormState extends State<VinModelForm> {
-  // String vin = '1GTG6CEN0L1139305';
   Widget central = Image.asset(
     "assets/images/CarApi1.png",
     width: 200,
@@ -31,393 +31,197 @@ class _VinModelFormState extends State<VinModelForm> {
         leading: Builder(
           builder: (context) {
             return IconButton(
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-              icon: Icon(Icons.menu_rounded),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+              icon: Icon(Icons.menu_rounded, color: Colors.white),
             );
           },
         ),
-        //  backgroundColor: Colors.blue,
         centerTitle: true,
+        backgroundColor: Colors.blueAccent,
         title: Text(
-          'VIN',
-          style: txt30,
+          'VIN Lookup',
+          style: TextStyle(
+              fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ),
       drawer: DrawerMenu(),
-      body: BlocBuilder<DataCubit, Keeper>(
-        builder: (context, state) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Flexible(
-                flex: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: TextField(
-                    controller: vinController,
-                    keyboardType: TextInputType.text,
-                    decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'VIN',
-                        hintText: 'Enter vin as 1GTG6CEN0L1139305'),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.white, Colors.blue.shade50],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: BlocBuilder<DataCubit, Keeper>(
+          builder: (context, state) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Flexible(
+                  flex: 2,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: TextField(
+                      controller: vinController,
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        labelText: 'Enter VIN',
+                        hintText: 'e.g., 1GTG6CEN0L1139305',
+                        prefixIcon: Icon(Icons.directions_car),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              Flexible(
-                flex: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                Flexible(
+                  flex: 2,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Container(
-                        width: 200,
-                        child: ElevatedButton(
-                          //  style: ButtonStyle(backgroundColor: )
-                          onPressed: () {
-                            if (vinController.text.trim().isEmpty) {
-                              showMyDialog(
-                                  context, 'The vin number field is empty!');
-                            } else {
-                              ReqRes<VinModel> vinModel =
-                                  ReqRes<VinModel>.empty();
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 40, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          backgroundColor: Colors.blueAccent,
+                        ),
+                        onPressed: () {
+                          if (vinController.text.trim().isEmpty) {
+                            showMyDialog(context, 'The VIN field is empty!');
+                          } else {
+                            ReqRes<VinModel> vinModel =
+                                ReqRes<VinModel>.empty();
+                            context
+                                .read<DataCubit>()
+                                .setVinModelReqRes(vinModel);
+
+                            setState(() {
+                              central = CircularProgressIndicator(
+                                  color: Colors.blueAccent);
+                            });
+
+                            VinModelCrud.getVinModeles(vinController.text)
+                                .then((value) {
                               context
                                   .read<DataCubit>()
-                                  .setVinModelReqRes(vinModel);
-
-                              setState(
-                                () {
-                                  central = CircularProgressIndicator(
-                                    color: Colors.blue,
-                                  );
-                                },
-                              );
-
-                              VinModelCrud.getVinModeles(vinController.text)
-                                  .then(
-                                (value) {
-                                  print(value);
-                                  context
-                                      .read<DataCubit>()
-                                      .setVinModelReqRes(value);
-
-                                  setState(
-                                    () {
-                                      central = GetCentralWidget(context
-                                          .read<DataCubit>()
-                                          .getVinModelReqRes);
-                                    },
-                                  );
-                                },
-                              );
-                            }
-                          },
-                          child: Text(
-                            'GO',
-                            style: TextStyle(
-                                fontSize: 20,
-                                color: Theme.of(context).primaryColor),
-                          ),
-                        ),
+                                  .setVinModelReqRes(value);
+                              setState(() {
+                                central = GetCentralWidget(context
+                                    .read<DataCubit>()
+                                    .getVinModelReqRes);
+                              });
+                            });
+                          }
+                        },
+                        child: Text('SEARCH',
+                            style:
+                                TextStyle(fontSize: 18, color: Colors.white)),
                       ),
-                      Container(
-                        width: 100,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            String vin = VinModelCrud.getRandomVin();
-                            vinController.text = vin;
-                            print(vin);
-                          },
-                          child: Text(
-                            'RND',
-                            style: TextStyle(
-                                fontSize: 20,
-                                color: Theme.of(context).primaryColor),
-                          ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 25, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          backgroundColor: Colors.grey.shade300,
                         ),
+                        onPressed: () {
+                          String vin = VinModelCrud.getRandomVin();
+                          vinController.text = vin;
+                        },
+                        child: Text('RANDOM',
+                            style:
+                                TextStyle(fontSize: 18, color: Colors.black)),
                       ),
                     ],
                   ),
                 ),
-              ),
-              Flexible(
-                child: Divider(
-                  color: Colors.black,
-                  thickness: 1,
-                ),
-              ),
-              Flexible(
-                flex: 10,
-                child: Center(
-                  child: central,
-                ),
-              ),
-            ],
-          );
-        },
+                Flexible(child: Divider(color: Colors.grey, thickness: 1)),
+                Flexible(flex: 10, child: Center(child: central)),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
 
   //-------------------------  CentralWidget  ----------------------
   Widget GetCentralWidget(ReqRes<VinModel> result) {
-    Widget central = Text(
-      'No Data',
-      style: txt15,
-    );
-
     if (result.list.isEmpty) {
-      if (result.status == 200) {
-        central = Text(
-          'No Data',
-          style: txt15,
-        );
-      } else {
-        central = Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('No Data'),
-            Text(
-              result.message,
-              style: txt15,
-            ),
-          ],
-        );
-      }
+      return Center(
+        child: Text(
+          result.status == 200 ? 'No Data' : result.message,
+          style: TextStyle(fontSize: 16, color: Colors.black54),
+        ),
+      );
     } else {
-      central = ListView(
+      return ListView(
+        padding: EdgeInsets.all(12),
         children: [
-          //=======================================
-          ListTile(
-            title: Text(
-              'model: ${result.list[0].model}',
-              style: txt20,
+          Card(
+            elevation: 4,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: ListTile(
+              leading: SvgPicture.asset(
+                'assets/icons/${result.list[0].make.toLowerCase()}.svg',
+                width: 40,
+              ),
+              title: Text('Model: ${result.list[0].model}',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              subtitle: Text(
+                  'Year: ${result.list[0].year} • Trim: ${result.list[0].trim}'),
             ),
           ),
-          Divider(
-            color: Colors.black,
-            thickness: 1,
-          ),
-          ListTile(
-            title: Text(
-              'make: ${result.list[0].make}',
-              style: txt20,
+          SizedBox(height: 10),
+          Card(
+            elevation: 4,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: ExpansionTile(
+              title: Text('Vehicle Specifications',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              children: [
+                _buildSpecTile('Body Class', result.list[0].body_class),
+                _buildSpecTile('Engine Model', result.list[0].engine_model),
+                _buildSpecTile('Cylinders',
+                    result.list[0].engine_number_of_cylinders.toString()),
+                _buildSpecTile('Doors', result.list[0].doors.toString()),
+                _buildSpecTile('Drive Type', result.list[0].drive_type),
+              ],
             ),
           ),
-          Divider(
-            color: Colors.black,
-            thickness: 1,
-          ),
-          ListTile(
-            title: Text(
-              'trim: ${result.list[0].trim}',
-              style: txt20,
+          SizedBox(height: 10),
+          Card(
+            elevation: 4,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: ExpansionTile(
+              title: Text('Available Trims',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              children: result.list[0].trims
+                  .map((trim) => ListTile(
+                        title: Text('${trim.name} (${trim.year})'),
+                        subtitle: Text(
+                            'MSRP: \$${trim.msrp} | Invoice: \$${trim.invoice}'),
+                      ))
+                  .toList(),
             ),
-          ),
-          Divider(
-            color: Colors.black,
-            thickness: 1,
-          ),
-          ListTile(
-            title: Text(
-              'year: ${result.list[0].year}',
-              style: txt20,
-            ),
-          ),
-          Divider(
-            color: Colors.black,
-            thickness: 2,
-          ),
-          ExpansionTile(
-            title: Text('SPECS: '),
-            children: [
-              ListTile(
-                title: Text(
-                  'body_class: ${result.list[0].body_class}',
-                  style: txt20,
-                ),
-              ),
-              Divider(
-                color: Colors.black,
-                thickness: 1,
-              ),
-              ListTile(
-                title: Text(
-                  'cab_type: ${result.list[0].cab_type}',
-                  style: txt20,
-                ),
-              ),
-              Divider(
-                color: Colors.black,
-                thickness: 1,
-              ),
-              ListTile(
-                title: Text(
-                  'displacement_cc: ${result.list[0].displacement_cc}',
-                  style: txt20,
-                ),
-              ),
-              Divider(
-                color: Colors.black,
-                thickness: 1,
-              ),
-              ListTile(
-                title: Text(
-                  'displacement_ci: ${result.list[0].displacement_ci}',
-                  style: txt20,
-                ),
-              ),
-              Divider(
-                color: Colors.black,
-                thickness: 1,
-              ),
-              ListTile(
-                title: Text(
-                  'displacement_l: ${result.list[0].displacement_l}',
-                  style: txt20,
-                ),
-              ),
-              Divider(
-                color: Colors.black,
-                thickness: 1,
-              ),
-              ListTile(
-                title: Text(
-                  'doors: ${result.list[0].doors}',
-                  style: txt20,
-                ),
-              ),
-              Divider(
-                color: Colors.black,
-                thickness: 1,
-              ),
-              ListTile(
-                title: Text(
-                  'drive type: ${result.list[0].drive_type}',
-                  style: txt20,
-                ),
-              ),
-              Divider(
-                color: Colors.black,
-                thickness: 1,
-              ),
-              ListTile(
-                title: Text(
-                  'engine configuration: ${result.list[0].engine_configuration}',
-                  style: txt20,
-                ),
-              ),
-              Divider(
-                color: Colors.black,
-                thickness: 1,
-              ),
-              ListTile(
-                title: Text(
-                  'engine model: ${result.list[0].engine_model}',
-                  style: txt20,
-                ),
-              ),
-              Divider(
-                color: Colors.black,
-                thickness: 1,
-              ),
-              ListTile(
-                title: Text(
-                  'engine number of cylinders: ${result.list[0].engine_number_of_cylinders}',
-                  style: txt20,
-                ),
-              ),
-              Divider(
-                color: Colors.black,
-                thickness: 1,
-              ),
-              ListTile(
-                title: Text(
-                  'number of seat rows: ${result.list[0].number_of_seat_rows}',
-                  style: txt20,
-                ),
-              ),
-              Divider(
-                color: Colors.black,
-                thickness: 1,
-              ),
-              ListTile(
-                title: Text(
-                  'number of seats: ${result.list[0].number_of_seats}',
-                  style: txt20,
-                ),
-              ),
-            ],
-          ),
-          Divider(
-            color: Colors.black,
-            thickness: 2,
-          ),
-          //=======================================
-          ExpansionTile(
-            title: Text('Trims: '),
-            //  subtitle:
-            children: [
-              SizedBox(
-                height: 400,
-                child: ListView.separated(
-                  separatorBuilder: (context, index) => const Divider(
-                    color: Colors.black,
-                    thickness: 1,
-                  ),
-                  itemCount: result.list[0].trims.length,
-                  itemBuilder: (context, index) {
-                    return ExpansionTile(
-                      title: Text("${result.list[0].trims[index].name} "),
-                      children: [
-                        ListTile(
-                          title: Text(
-                            'makers: ${result.list[0].trims[index].make_name}',
-                            style: txt15,
-                          ),
-                        ),
-                        ListTile(
-                          title: Text(
-                            'model: ${result.list[0].trims[index].model_name}',
-                            style: txt15,
-                          ),
-                        ),
-                        ListTile(
-                          title: Text(
-                            'description: ${result.list[0].trims[index].description}',
-                            style: txt15,
-                          ),
-                        ),
-                        ListTile(
-                          title: Text(
-                            'year: ${result.list[0].trims[index].year}',
-                            style: txt15,
-                          ),
-                        ),
-                        ListTile(
-                          title: Text(
-                            'msrp: ${result.list[0].trims[index].msrp}',
-                            style: txt15,
-                          ),
-                        ),
-                        ListTile(
-                          title: Text(
-                            'invoice: ${result.list[0].trims[index].invoice}',
-                            style: txt15,
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ],
           ),
         ],
       );
     }
-    return central;
+  }
+
+  Widget _buildSpecTile(String title, String value) {
+    return ListTile(
+      leading: Icon(Icons.check_circle_outline, color: Colors.blueAccent),
+      title: Text(title, style: TextStyle(fontWeight: FontWeight.w500)),
+      trailing: Text(value, style: TextStyle(color: Colors.black87)),
+    );
   }
 }

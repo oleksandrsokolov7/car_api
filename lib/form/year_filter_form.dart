@@ -2,7 +2,7 @@ import 'package:car_api/constants.dart';
 import 'package:flutter/material.dart';
 
 class YearFilterForm extends StatefulWidget {
-  YearFilterForm({Key? key, required this.year}) : super(key: key);
+  YearFilterForm({super.key, required this.year});
 
   String year;
 
@@ -45,7 +45,6 @@ class _YearFilterFormState extends State<YearFilterForm> {
               child: ListView.separated(
                   itemBuilder: (context, index) {
                     return RadioMenuButton(
-                        child: Text(listYear[index]),
                         value: listYear[index],
                         groupValue: widget.year,
                         onChanged: (val) {
@@ -53,7 +52,8 @@ class _YearFilterFormState extends State<YearFilterForm> {
                             print(val);
                             widget.year = val!;
                           });
-                        });
+                        },
+                        child: Text(listYear[index]));
                   },
                   separatorBuilder: (context, index) => const Divider(
                         color: Colors.black,
@@ -66,7 +66,7 @@ class _YearFilterFormState extends State<YearFilterForm> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Container(
+                    SizedBox(
                       width: 150,
                       child: ElevatedButton(
                           onPressed: () {
@@ -75,7 +75,7 @@ class _YearFilterFormState extends State<YearFilterForm> {
                           },
                           child: Text('OK')),
                     ),
-                    Container(
+                    SizedBox(
                       width: 150,
                       child: ElevatedButton(
                           onPressed: () {

@@ -5,9 +5,8 @@ import 'package:car_api/models/makes.dart';
 import 'package:car_api/models/makes_res.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:collection/src/iterable_extensions.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class MakesIdFilter extends StatefulWidget {
   MakesIdFilter({Key? key, required this.makerId}) : super(key: key);
@@ -23,38 +22,32 @@ class _MakesIdFilterState extends State<MakesIdFilter> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         centerTitle: true,
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.white,
         title: Text(
-          'Maker',
-          style: txt30,
+          'Select Maker',
+          style: TextStyle(
+              fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black),
         ),
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: BlocBuilder<DataCubit, Keeper>(builder: (context, state) {
-        Widget central =
-            context.read<DataCubit>().getMakesRequestRes.message.isEmpty
-                ? CircularProgressIndicator(
-                    color: Colors.blue,
-                  )
-                : Center(
-                    child: GetCentralWidget(
-                        context.read<DataCubit>().getMakesRequestRes),
-                  );
+        Widget central = context
+                .read<DataCubit>()
+                .getMakesRequestRes
+                .message
+                .isEmpty
+            ? Center(child: CircularProgressIndicator(color: Colors.blue))
+            : GetCentralWidget(context.read<DataCubit>().getMakesRequestRes);
 
         if (context.read<DataCubit>().getMakesRequestRes.status == 0) {
-          MakesCrud.getMakes().then(
-            (value) {
-              print(value);
-              context.read<DataCubit>().setMakesRequestRes(value);
-
-              central = GetCentralWidget(
-                  context.read<DataCubit>().getMakesRequestRes);
-
-              setState(() {});
-            },
-          );
+          MakesCrud.getMakes().then((value) {
+            context.read<DataCubit>().setMakesRequestRes(value);
+            setState(() {});
+          });
         }
 
-        return Center(
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
           child: central,
         );
       }),
@@ -62,121 +55,85 @@ class _MakesIdFilterState extends State<MakesIdFilter> {
   }
 
   Widget GetCentralWidget(MakesRequestRes result) {
-    Widget central = Text(
-      'No Data',
-      style: txt15,
-    );
-
     if (result.list.isEmpty) {
-      if (result.status == 200) {
-        central = Text(
-          'No Data',
-          style: txt15,
-        );
-      } else {
-        central = Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('No Data'),
-            Text(
-              result.message,
-              style: txt15,
-            ),
-          ],
-        );
-      }
+      return Center(
+        child: Text(
+          result.status == 200 ? 'No Data' : result.message,
+          style: TextStyle(fontSize: 16, color: Colors.grey),
+        ),
+      );
     } else {
       Makes noneMakes = Makes(0, 'None', '');
-
-      var exist =
-          result.list.firstWhereOrNull((item) => item.id == noneMakes.id);
-
-      if (exist == null) {
+      if (result.list.firstWhereOrNull((item) => item.id == noneMakes.id) ==
+          null) {
         result.list.insert(0, noneMakes);
       }
 
-      central = Column(
+      return Column(
         children: [
-          Flexible(
-            flex: 7,
+          Expanded(
             child: ListView.separated(
-              separatorBuilder: (context, index) => const Divider(
-                color: Colors.black,
-                thickness: 1,
-              ),
+              separatorBuilder: (context, index) =>
+                  Divider(color: Colors.grey.shade300, thickness: 1),
               itemCount: result.list.length,
               itemBuilder: (context, index) {
-                return RadioMenuButton(
-                  trailingIcon: CircleAvatar(
-                    radius: 20,
-                    backgroundColor: Theme.of(context).hoverColor,
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.grey.shade200,
                     child: result.list[index].picture.isNotEmpty
                         ? SvgPicture.asset(
                             'assets/icons/${result.list[index].picture}',
-                            fit: BoxFit.cover,
+                            width: 30,
                           )
-                        : Container(),
+                        : Icon(Icons.directions_car, color: Colors.grey),
                   ),
-                  child: Text(result.list[index].name),
-                  value: result.list[index].id.toString(),
-                  groupValue: widget.makerId,
-                  onChanged: (val) {
-                    setState(
-                      () {
-                        print(val);
+                  title: Text(
+                    result.list[index].name,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                  ),
+                  trailing: Radio<String>(
+                    value: result.list[index].id.toString(),
+                    groupValue: widget.makerId,
+                    onChanged: (val) {
+                      setState(() {
                         widget.makerId = val!;
-                      },
-                    );
-                  },
+                      });
+                    },
+                  ),
                 );
               },
             ),
           ),
-          Flexible(
-            flex: 1,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    width: 150,
-                    // decoration: BoxDecoration(
-                    //   color: Colors.blue,
-                    //   borderRadius: BorderRadius.all(
-                    //     Radius.circular(25.0),
-                    //   ),
-                    // ),
-                    child: ElevatedButton(
-                        onPressed: () {
-                          print(widget.makerId);
-                          Navigator.pop(context, widget.makerId);
-                        },
-                        child: Text('OK')),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context, widget.makerId),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    minimumSize: Size(150, 50),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25)),
                   ),
-                  Container(
-                    width: 150,
-                    // decoration: BoxDecoration(
-                    //   color: Colors.blue,
-                    //   borderRadius: BorderRadius.all(
-                    //     Radius.circular(25.0),
-                    //   ),
-                    // ),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        print('Cancel');
-                        Navigator.pop(context, null);
-                      },
-                      child: Text('Cancel'),
-                    ),
+                  child: Text('OK', style: TextStyle(fontSize: 16)),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context, null),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey.shade400,
+                    minimumSize: Size(150, 50),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25)),
                   ),
-                ],
-              ),
+                  child: Text('Cancel', style: TextStyle(fontSize: 16)),
+                ),
+              ],
             ),
-          ),
+          )
         ],
       );
     }
-    return central;
   }
 }

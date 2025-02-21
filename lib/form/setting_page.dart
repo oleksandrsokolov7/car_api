@@ -17,7 +17,6 @@ class _SettingsPageState extends State<SettingsPage> {
     _loadSavedTheme();
   }
 
-  // Загрузка сохранённой темы из SharedPreferences
   Future<void> _loadSavedTheme() async {
     final prefs = await SharedPreferences.getInstance();
     final themeString = prefs.getString('theme') ?? 'AppTheme.light';
@@ -26,7 +25,6 @@ class _SettingsPageState extends State<SettingsPage> {
     });
   }
 
-  // Преобразование строки в AppTheme
   AppTheme _getAppThemeFromString(String themeString) {
     switch (themeString) {
       case 'AppTheme.light':
@@ -49,66 +47,50 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        backgroundColor: Colors.blue,
+        centerTitle: true,
+        title: Text(
+          'Settings',
+          style: TextStyle(
+              fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+        ),
       ),
       body: ListView(
         children: <Widget>[
-          RadioListTile<AppTheme>(
-            title: Text('Light Theme'),
-            value: AppTheme.light,
-            groupValue: _selectedTheme,
-            onChanged: (AppTheme? value) {
-              setState(() {
-                _selectedTheme = value;
-              });
-              themeBloc.add(ThemeEvent(value!));
-            },
-          ),
-          RadioListTile<AppTheme>(
-            title: Text('Dark Theme'),
-            value: AppTheme.dark,
-            groupValue: _selectedTheme,
-            onChanged: (AppTheme? value) {
-              setState(() {
-                _selectedTheme = value;
-              });
-              themeBloc.add(ThemeEvent(value!));
-            },
-          ),
-          RadioListTile<AppTheme>(
-            title: Text('Custom Light Theme'),
-            value: AppTheme.customLight,
-            groupValue: _selectedTheme,
-            onChanged: (AppTheme? value) {
-              setState(() {
-                _selectedTheme = value;
-              });
-              themeBloc.add(ThemeEvent(value!));
-            },
-          ),
-          RadioListTile<AppTheme>(
-            title: Text('Custom Dark Theme'),
-            value: AppTheme.customDark,
-            groupValue: _selectedTheme,
-            onChanged: (AppTheme? value) {
-              setState(() {
-                _selectedTheme = value;
-              });
-              themeBloc.add(ThemeEvent(value!));
-            },
-          ),
-          RadioListTile<AppTheme>(
-            title: Text('System Theme'),
-            value: AppTheme.system,
-            groupValue: _selectedTheme,
-            onChanged: (AppTheme? value) {
-              setState(() {
-                _selectedTheme = value;
-              });
-              themeBloc.add(ThemeEvent(value!));
-            },
-          ),
+          _buildThemeOption('Light Theme', AppTheme.light, themeBloc),
+          _buildThemeOption('Dark Theme', AppTheme.dark, themeBloc),
+          _buildThemeOption(
+              'Custom Light Theme', AppTheme.customLight, themeBloc),
+          _buildThemeOption(
+              'Custom Dark Theme', AppTheme.customDark, themeBloc),
+          _buildThemeOption('System Theme', AppTheme.system, themeBloc),
         ],
+      ),
+    );
+  }
+
+  Widget _buildThemeOption(String title, AppTheme theme, ThemeBloc themeBloc) {
+    return Card(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: RadioListTile<AppTheme>(
+        title: Text(
+          title,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+        ),
+        value: theme,
+        groupValue: _selectedTheme,
+        activeColor: Colors.blue,
+        onChanged: (AppTheme? value) async {
+          setState(() {
+            _selectedTheme = value;
+          });
+          themeBloc.add(ThemeEvent(value!));
+
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('theme', value.toString());
+        },
       ),
     );
   }

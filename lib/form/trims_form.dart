@@ -8,7 +8,6 @@ import 'package:car_api/constants.dart';
 import 'package:car_api/crud/model_car_crud.dart';
 
 import 'package:car_api/widget/drawer_menu.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:number_paginator/number_paginator.dart';
 
@@ -20,182 +19,61 @@ class TrimsForm extends StatefulWidget {
 }
 
 class _TrimsFormState extends State<TrimsForm> {
-  int _currentPage = 0; // Переменная для хранения текущей страницы
+  int _currentPage = 0;
   UniqueKey _paginatorKey = UniqueKey();
 
   @override
   Widget build(BuildContext context) {
     Widget central = context.read<DataCubit>().getTrimReqRes.message.isEmpty
-        ? CircularProgressIndicator(
-            color: Colors.blue,
-          )
-        : Center(
-            child: GetCentralWidget(context.read<DataCubit>().getTrimReqRes),
-          );
+        ? const Center(child: CircularProgressIndicator(color: Colors.blue))
+        : GetCentralWidget(context.read<DataCubit>().getTrimReqRes);
 
     if (context.read<DataCubit>().getTrimReqRes.status == 0) {
-      TrimCrud.getTrims('1', '2020', '0').then(
-        (value) {
-          print(value);
-          context.read<DataCubit>().setTrimReqRes(value);
-
-          central = GetCentralWidget(context.read<DataCubit>().getTrimReqRes);
-
-          setState(() {});
-        },
-      );
+      TrimCrud.getTrims('1', '2020', '0').then((value) {
+        context.read<DataCubit>().setTrimReqRes(value);
+        setState(() {});
+      });
     }
 
     return Scaffold(
       appBar: AppBar(
         leading: Builder(
-          builder: (context) {
-            return IconButton(
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-              icon: Icon(Icons.menu_rounded),
-            );
-          },
-        ),
-        backgroundColor: Colors.blue,
-        centerTitle: true,
-        title: Text(
-          'Trims',
-          style: txt30,
-        ),
-        // -----------  Actions start  -----------------
-
-        actions: <Widget>[
-          PopupMenuButton<int>(
-            onSelected: (item) {
-              if (item == 0) {
-                String yearr = context.read<DataCubit>().getYearFilter;
-                print(yearr);
-                int h2 = 0;
-                Navigator.pushNamed(context, '/YearFilterForm',
-                        arguments: yearr)
-                    .then((value) {
-                  if (value != null) {
-                    int g5 = 5;
-                    context.read<DataCubit>().setYearFilter(value.toString());
-
-                    TrimCrud.getTrims(
-                            '1',
-                            context.read<DataCubit>().getYearFilter,
-                            context.read<DataCubit>().getMakesIdFilter)
-                        .then((val) {
-                      context.read<DataCubit>().setTrimReqRes(val);
-
-                      setState(() {
-                        _currentPage = 0;
-                        _paginatorKey = UniqueKey();
-                      });
-                    });
-                  }
-                });
-              } else if (item == 1) {
-                //  MakesIdFilter
-                print('MakesIdFilter');
-                Navigator.pushNamed(context, '/MakesIdFilter',
-                        arguments: context.read<DataCubit>().getMakesIdFilter)
-                    .then((values) {
-                  if (values != null && values.toString().trim().isNotEmpty) {
-                    if (values != null) {
-                      context
-                          .read<DataCubit>()
-                          .setMakesIdFilter(values.toString());
-
-                      TrimCrud.getTrims(
-                              '1',
-                              context.read<DataCubit>().getYearFilter,
-                              context.read<DataCubit>().getMakesIdFilter)
-                          .then((val) {
-                        context.read<DataCubit>().setTrimReqRes(val);
-
-                        setState(() {
-                          _currentPage = 0;
-                          _paginatorKey = UniqueKey();
-                        });
-                      });
-                    }
-                  }
-
-                  print(values);
-                  int h3 = 3;
-                });
-              }
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem<int>(
-                  value: 0,
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.calendar_month,
-                        color: Colors.black,
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text('Year'),
-                    ],
-                  )),
-              PopupMenuItem<int>(
-                  value: 1,
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.car_repair_sharp,
-                        color: Colors.black,
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text('Makes'),
-                    ],
-                  )),
-            ],
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.menu_rounded),
+            onPressed: () => Scaffold.of(context).openDrawer(),
           ),
-        ],
-
-        // -----------  Actions end  -----------------
+        ),
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        title: Text('Trims', style: txt30.copyWith(color: Colors.black)),
+        actions: _buildPopupMenu(context),
+        elevation: 1,
       ),
-      drawer: DrawerMenu(),
-      body: BlocBuilder<DataCubit, Keeper>(builder: (context, state) {
-        return Center(
+      drawer: const DrawerMenu(),
+      body: BlocBuilder<DataCubit, Keeper>(
+        builder: (context, state) => Padding(
+          padding: const EdgeInsets.all(16.0),
           child: central,
-        );
-      }),
+        ),
+      ),
       bottomNavigationBar: Card(
         margin: EdgeInsets.zero,
         elevation: 4,
         child: NumberPaginator(
           key: _paginatorKey,
           initialPage: _currentPage,
-          // by default, the paginator shows numbers as center content
           numberPages: context.read<DataCubit>().getTrimReqRes.pages_total,
           onPageChange: (int index) {
             setState(() {
-              _currentPage = index; // Обновление текущей страницы
+              _currentPage = index;
               TrimCrud.getTrims(
-                      (index + 1).toString(),
-                      context.read<DataCubit>().getYearFilter,
-                      context.read<DataCubit>().getMakesIdFilter)
-                  .then(
-                (value) {
-                  print(value);
-
-                  setState(() {
-                    context.read<DataCubit>().setTrimReqRes(value);
-
-                    central = GetCentralWidget(
-                        context.read<DataCubit>().getTrimReqRes);
-                    _currentPage = 0;
-                  });
-                },
-              );
-              print('indes = $index');
+                (index + 1).toString(),
+                context.read<DataCubit>().getYearFilter,
+                context.read<DataCubit>().getMakesIdFilter,
+              ).then((value) {
+                context.read<DataCubit>().setTrimReqRes(value);
+                setState(() {});
+              });
             });
           },
         ),
@@ -203,83 +81,117 @@ class _TrimsFormState extends State<TrimsForm> {
     );
   }
 
-  //-------------------------  CentralWidget  ----------------------
-  Widget GetCentralWidget(ReqRes<Trim> result) {
-    Widget central = Text(
-      'No Data',
-      style: txt15,
-    );
+  List<Widget> _buildPopupMenu(BuildContext context) {
+    return [
+      PopupMenuButton<int>(
+        onSelected: (item) => _handleMenuSelection(context, item),
+        itemBuilder: (context) => [
+          const PopupMenuItem<int>(
+            value: 0,
+            child: Row(
+              children: [
+                Icon(Icons.calendar_month, color: Colors.black),
+                SizedBox(width: 5),
+                Text('Year')
+              ],
+            ),
+          ),
+          const PopupMenuItem<int>(
+            value: 1,
+            child: Row(
+              children: [
+                Icon(Icons.car_repair_sharp, color: Colors.black),
+                SizedBox(width: 5),
+                Text('Makes')
+              ],
+            ),
+          ),
+        ],
+      ),
+    ];
+  }
 
+  void _handleMenuSelection(BuildContext context, int item) {
+    if (item == 0) {
+      Navigator.pushNamed(context, '/YearFilterForm',
+              arguments: context.read<DataCubit>().getYearFilter)
+          .then((value) {
+        if (value != null) {
+          context.read<DataCubit>().setYearFilter(value.toString());
+          _fetchTrims();
+        }
+      });
+    } else if (item == 1) {
+      Navigator.pushNamed(context, '/MakesIdFilter',
+              arguments: context.read<DataCubit>().getMakesIdFilter)
+          .then((values) {
+        if (values != null && values.toString().trim().isNotEmpty) {
+          context.read<DataCubit>().setMakesIdFilter(values.toString());
+          _fetchTrims();
+        }
+      });
+    }
+  }
+
+  void _fetchTrims() {
+    TrimCrud.getTrims(
+      '1',
+      context.read<DataCubit>().getYearFilter,
+      context.read<DataCubit>().getMakesIdFilter,
+    ).then((val) {
+      context.read<DataCubit>().setTrimReqRes(val);
+      setState(() {
+        _currentPage = 0;
+        _paginatorKey = UniqueKey();
+      });
+    });
+  }
+
+  Widget GetCentralWidget(ReqRes<Trim> result) {
     if (result.list.isEmpty) {
-      if (result.status == 200) {
-        central = Text(
-          'No Data',
-          style: txt15,
-        );
-      } else {
-        central = Column(
+      return Center(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('No Data'),
-            Text(
-              result.message,
-              style: txt15,
-            ),
+            const Text('No Data', style: TextStyle(fontSize: 16)),
+            if (result.status != 200)
+              Text(result.message,
+                  style: const TextStyle(fontSize: 14, color: Colors.grey)),
           ],
-        );
-      }
-    } else {
-      central = ListView.separated(
-        separatorBuilder: (context, index) => const Divider(
-          color: Colors.black,
-          thickness: 1,
         ),
-        itemCount: result.list.length,
-        itemBuilder: (context, index) {
-          return ExpansionTile(
-            title: Text("${result.list[index].name} "),
-            children: [
-              ListTile(
-                title: Text(
-                  'makers: ${result.list[index].make_name}',
-                  style: txt15,
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  'model: ${result.list[index].model_name}',
-                  style: txt15,
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  'description: ${result.list[index].description}',
-                  style: txt15,
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  'year: ${result.list[index].year}',
-                  style: txt15,
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  'msrp: ${result.list[index].msrp}',
-                  style: txt15,
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  'invoice: ${result.list[index].invoice}',
-                  style: txt15,
-                ),
-              ),
-            ],
-          );
-        },
       );
     }
-    return central;
+
+    return ListView.separated(
+      separatorBuilder: (context, index) =>
+          const Divider(color: Colors.black12, thickness: 1),
+      itemCount: result.list.length,
+      itemBuilder: (context, index) {
+        return Card(
+          elevation: 2,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: ExpansionTile(
+            title: Text(result.list[index].name,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+            children: [
+              _buildDetailTile('Makers', result.list[index].make_name),
+              _buildDetailTile('Model', result.list[index].model_name),
+              _buildDetailTile('Description', result.list[index].description),
+              _buildDetailTile('Year', result.list[index].year.toString()),
+              _buildDetailTile('MSRP', result.list[index].msrp.toString()),
+              _buildDetailTile(
+                  'Invoice', result.list[index].invoice.toString()),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDetailTile(String title, String value) {
+    return ListTile(
+      title: Text('$title: $value', style: const TextStyle(fontSize: 14)),
+    );
   }
 }

@@ -7,7 +7,6 @@ import 'package:car_api/widget/drawer_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:car_api/models/makes.dart';
-import 'package:collection/src/iterable_extensions.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class MakesForm extends StatefulWidget {
@@ -23,15 +22,10 @@ class _MakesFormState extends State<MakesForm> {
     return Scaffold(
       appBar: AppBar(
         leading: Builder(
-          builder: (context) {
-            return IconButton(
-              onPressed: () {
-                print('on_press');
-                Scaffold.of(context).openDrawer();
-              },
-              icon: Icon(Icons.menu_rounded),
-            );
-          },
+          builder: (context) => IconButton(
+            onPressed: () => Scaffold.of(context).openDrawer(),
+            icon: Icon(Icons.menu_rounded),
+          ),
         ),
         backgroundColor: Colors.blue,
         title: Text(
@@ -40,107 +34,110 @@ class _MakesFormState extends State<MakesForm> {
         ),
         centerTitle: true,
       ),
-      body: BlocBuilder<DataCubit, Keeper>(builder: (context, state) {
-        Widget central =
-            context.read<DataCubit>().getMakesRequestRes.message.isEmpty
-                ? CircularProgressIndicator(
-                    color: Colors.blue,
-                  )
-                : Center(
-                    child: GetCentralWidget(
-                        context.read<DataCubit>().getMakesRequestRes),
-                  );
-
-        if (context.read<DataCubit>().getMakesRequestRes.status == 0) {
-          MakesCrud.getMakes().then(
-            (value) {
-              print(value);
+      body: BlocBuilder<DataCubit, Keeper>(
+        builder: (context, state) {
+          if (context.read<DataCubit>().getMakesRequestRes.status == 0) {
+            MakesCrud.getMakes().then((value) {
               context.read<DataCubit>().setMakesRequestRes(value);
-
-              central = GetCentralWidget(
-                  context.read<DataCubit>().getMakesRequestRes);
-
               setState(() {});
-            },
-          );
-        }
+            });
+            return Center(child: CircularProgressIndicator(color: Colors.blue));
+          }
 
-        return Center(
-          child: central,
-        );
-      }),
+          return GetCentralWidget(context.read<DataCubit>().getMakesRequestRes);
+        },
+      ),
       drawer: DrawerMenu(),
     );
   }
 
   Widget GetCentralWidget(MakesRequestRes result) {
-    Widget central = Text(
-      'No Data',
-      style: txt15,
-    );
-
     if (result.list.isEmpty) {
-      if (result.status == 200) {
-        central = Text(
-          'No Data',
+      return Center(
+        child: Text(
+          result.status == 200 ? 'No Data' : result.message,
           style: txt15,
-        );
-      } else {
-        central = Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('No Data'),
-            Text(
-              result.message,
-              style: txt15,
-            ),
-          ],
-        );
-      }
-    } else {
-      result.list.removeWhere((item) => item.id == 0);
+        ),
+      );
+    }
 
-      central = ListView.separated(
-        separatorBuilder: (context, index) => const Divider(
-          color: Colors.black,
-          thickness: 1,
+    result.list.removeWhere((item) => item.id == 0);
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          childAspectRatio: 1,
         ),
         itemCount: result.list.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            leading: Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: CircleAvatar(
-                radius: 20,
-                backgroundColor: Theme.of(context).hoverColor,
-                child: result.list[index].picture.isNotEmpty
-                    ? SvgPicture.asset(
-                        'assets/icons/${result.list[index].picture}',
-                        fit: BoxFit.cover, // Настройка под размер аватара
-                      )
-                    : Container(),
-
-                // Text(
-                //     '${result.list[index].id}',
-                //     style: txt15,
-                //   ),
-              ),
+          return Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
             ),
-            // leading: Text(
-            //   '${result.list[index].id}',
-            //   style: txt20,
-            // ),
-
-            contentPadding: EdgeInsets.zero,
-            dense: true,
-            title: Text(
-              '${result.list[index].name}',
-              style: txt20,
+            elevation: 4,
+            child: InkWell(
+              onTap: () {},
+              borderRadius: BorderRadius.circular(15),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundColor:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.grey[800] // темный фон для темной темы
+                            : Theme.of(context)
+                                .hoverColor, // стандартный фон для светлой темы
+                    child: result.list[index].picture.isNotEmpty
+                        ? Container(
+                            padding: EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.white.withOpacity(
+                                      0.6) // светлый фон для темной темы
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(50),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.black45
+                                      : Colors.transparent,
+                                  blurRadius: 6.0,
+                                  spreadRadius: 1.0,
+                                ),
+                              ],
+                            ),
+                            child: SvgPicture.asset(
+                              'assets/icons/${result.list[index].picture}',
+                              width: 50,
+                              height: 50,
+                            ),
+                          )
+                        : Icon(Icons.directions_car,
+                            size: 50,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    result.list[index].name,
+                    style: txt20,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
           );
         },
-      );
-    }
-    return central;
+      ),
+    );
   }
 }

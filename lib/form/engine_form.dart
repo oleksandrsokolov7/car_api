@@ -16,182 +16,88 @@ class EngineForm extends StatefulWidget {
 }
 
 class _EngineFormState extends State<EngineForm> {
-  int _currentPage = 0; // Переменная для хранения текущей страницы
+  int _currentPage = 0;
   UniqueKey _paginatorKey = UniqueKey();
 
   @override
   Widget build(BuildContext context) {
     Widget central = context.read<DataCubit>().getEngineReqRes.message.isEmpty
-        ? CircularProgressIndicator(
-            color: Colors.blue,
-          )
+        ? const CircularProgressIndicator(color: Colors.blue)
         : Center(
             child: GetCentralWidget(context.read<DataCubit>().getEngineReqRes),
           );
 
     if (context.read<DataCubit>().getEngineReqRes.status == 0) {
-      EngineCrud.getEngines('1', '2020', '0').then(
-        (value) {
-          print(value);
-          context.read<DataCubit>().setEngineReqRes(value);
-
-          central = GetCentralWidget(context.read<DataCubit>().getEngineReqRes);
-
-          setState(() {});
-        },
-      );
+      EngineCrud.getEngines('1', '2020', '0').then((value) {
+        context.read<DataCubit>().setEngineReqRes(value);
+        setState(() {});
+      });
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         leading: Builder(
-          builder: (context) {
-            return IconButton(
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-              icon: Icon(Icons.menu_rounded),
-            );
-          },
+          builder: (context) => IconButton(
+            onPressed: () => Scaffold.of(context).openDrawer(),
+            icon: const Icon(Icons.menu_rounded, color: Colors.black),
+          ),
         ),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.white,
+        elevation: 1,
         centerTitle: true,
-        title: Text(
-          'Engines',
-          style: txt30,
-        ),
-        // -----------  Actions start  -----------------
-
+        title: Text('Engines', style: txt30.copyWith(color: Colors.black)),
         actions: <Widget>[
           PopupMenuButton<int>(
-            onSelected: (item) {
-              if (item == 0) {
-                String yearr = context.read<DataCubit>().getYearFilter;
-                print(yearr);
-                int h2 = 0;
-                Navigator.pushNamed(context, '/YearFilterForm',
-                        arguments: yearr)
-                    .then((value) {
-                  if (value != null) {
-                    int g5 = 5;
-                    context.read<DataCubit>().setYearFilter(value.toString());
-
-                    EngineCrud.getEngines(
-                            '1',
-                            context.read<DataCubit>().getYearFilter,
-                            context.read<DataCubit>().getMakesIdFilter)
-                        .then((val) {
-                      context.read<DataCubit>().setEngineReqRes(val);
-
-                      setState(() {
-                        _currentPage = 0;
-                        _paginatorKey = UniqueKey();
-                      });
-                    });
-                  }
-                });
-              } else if (item == 1) {
-                //  MakesIdFilter
-                print('MakesIdFilter');
-                Navigator.pushNamed(context, '/MakesIdFilter',
-                        arguments: context.read<DataCubit>().getMakesIdFilter)
-                    .then((values) {
-                  if (values != null && values.toString().trim().isNotEmpty) {
-                    if (values != null) {
-                      context
-                          .read<DataCubit>()
-                          .setMakesIdFilter(values.toString());
-
-                      EngineCrud.getEngines(
-                              '1',
-                              context.read<DataCubit>().getYearFilter,
-                              context.read<DataCubit>().getMakesIdFilter)
-                          .then((val) {
-                        context.read<DataCubit>().setEngineReqRes(val);
-
-                        setState(() {
-                          _currentPage = 0;
-                          _paginatorKey = UniqueKey();
-                        });
-                      });
-                    }
-                  }
-
-                  print(values);
-                  int h3 = 3;
-                });
-              }
-            },
+            icon: const Icon(Icons.filter_list, color: Colors.black),
+            onSelected: (item) => _handleMenuSelection(item, context),
             itemBuilder: (context) => [
-              PopupMenuItem<int>(
-                  value: 0,
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.calendar_month,
-                        color: Colors.black,
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text('Year'),
-                    ],
-                  )),
-              PopupMenuItem<int>(
-                  value: 1,
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.car_repair_sharp,
-                        color: Colors.black,
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text('Makes'),
-                    ],
-                  )),
+              const PopupMenuItem<int>(
+                value: 0,
+                child: Row(
+                  children: [
+                    Icon(Icons.calendar_month, color: Colors.black),
+                    SizedBox(width: 5),
+                    Text('Year'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem<int>(
+                value: 1,
+                child: Row(
+                  children: [
+                    Icon(Icons.car_repair, color: Colors.black),
+                    SizedBox(width: 5),
+                    Text('Makes'),
+                  ],
+                ),
+              ),
             ],
           ),
         ],
-
-        // -----------  Actions end  -----------------
       ),
-      drawer: DrawerMenu(),
-      body: BlocBuilder<DataCubit, Keeper>(builder: (context, state) {
-        return Center(
-          child: central,
-        );
-      }),
+      drawer: const DrawerMenu(),
+      body: BlocBuilder<DataCubit, Keeper>(
+        builder: (context, state) => Center(child: central),
+      ),
       bottomNavigationBar: Card(
         margin: EdgeInsets.zero,
         elevation: 4,
         child: NumberPaginator(
           key: _paginatorKey,
           initialPage: _currentPage,
-          // by default, the paginator shows numbers as center content
           numberPages: context.read<DataCubit>().getEngineReqRes.pages_total,
           onPageChange: (int index) {
             setState(() {
-              _currentPage = index; // Обновление текущей страницы
+              _currentPage = index;
               EngineCrud.getEngines(
-                      (index + 1).toString(),
-                      context.read<DataCubit>().getYearFilter,
-                      context.read<DataCubit>().getMakesIdFilter)
-                  .then(
-                (value) {
-                  print(value);
-
-                  setState(() {
-                    context.read<DataCubit>().setEngineReqRes(value);
-
-                    central = GetCentralWidget(
-                        context.read<DataCubit>().getEngineReqRes);
-                    _currentPage = 0;
-                  });
-                },
-              );
-              print('indes = $index');
+                (index + 1).toString(),
+                context.read<DataCubit>().getYearFilter,
+                context.read<DataCubit>().getMakesIdFilter,
+              ).then((value) {
+                context.read<DataCubit>().setEngineReqRes(value);
+                setState(() {});
+              });
             });
           },
         ),
@@ -199,151 +105,117 @@ class _EngineFormState extends State<EngineForm> {
     );
   }
 
-  //-------------------------  CentralWidget  ----------------------
-  Widget GetCentralWidget(ReqRes<Engine> result) {
-    Widget central = Text(
-      'No Data',
-      style: txt15,
-    );
+  void _handleMenuSelection(int item, BuildContext context) {
+    if (item == 0) {
+      Navigator.pushNamed(context, '/YearFilterForm',
+              arguments: context.read<DataCubit>().getYearFilter)
+          .then((value) {
+        if (value != null) {
+          context.read<DataCubit>().setYearFilter(value.toString());
+          _refreshEngines();
+        }
+      });
+    } else if (item == 1) {
+      Navigator.pushNamed(context, '/MakesIdFilter',
+              arguments: context.read<DataCubit>().getMakesIdFilter)
+          .then((value) {
+        if (value != null) {
+          context.read<DataCubit>().setMakesIdFilter(value.toString());
+          _refreshEngines();
+        }
+      });
+    }
+  }
 
+  void _refreshEngines() {
+    EngineCrud.getEngines(
+      '1',
+      context.read<DataCubit>().getYearFilter,
+      context.read<DataCubit>().getMakesIdFilter,
+    ).then((value) {
+      context.read<DataCubit>().setEngineReqRes(value);
+      setState(() {
+        _currentPage = 0;
+        _paginatorKey = UniqueKey();
+      });
+    });
+  }
+
+  Widget GetCentralWidget(ReqRes<Engine> result) {
     if (result.list.isEmpty) {
-      if (result.status == 200) {
-        central = Text(
-          'No Data',
+      return Center(
+        child: Text(
+          result.status == 200 ? 'No Data' : result.message,
           style: txt15,
-        );
-      } else {
-        central = Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('No Data'),
-            Text(
-              result.message,
-              style: txt15,
-            ),
-          ],
-        );
-      }
-    } else {
-      central = ListView.separated(
-        separatorBuilder: (context, index) => const Divider(
-          color: Colors.black,
-          thickness: 1,
         ),
-        itemCount: result.list.length,
-        itemBuilder: (context, index) {
-          return ExpansionTile(
-            title: Text(
-                "${result.list[index].trim.make_name}  ${result.list[index].trim.model_name} "),
-            children: [
-              ListTile(
-                title: Text(
-                  'engine_type: ${result.list[index].engine_type}',
-                  style: txt15,
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  'fuel_type: ${result.list[index].fuel_type}',
-                  style: txt15,
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  'cylinders: ${result.list[index].cylinders}',
-                  style: txt15,
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  'horsepower_hp: ${result.list[index].horsepower_hp}',
-                  style: txt15,
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  'horsepower_rpm: ${result.list[index].horsepower_rpm}',
-                  style: txt15,
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  'torque_ft_lbs: ${result.list[index].torque_ft_lbs}',
-                  style: txt15,
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  'torque_rpm: ${result.list[index].torque_rpm}',
-                  style: txt15,
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  'valves: ${result.list[index].valves}',
-                  style: txt15,
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  'valve_timing: ${result.list[index].valve_timing}',
-                  style: txt15,
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  'cam_type: ${result.list[index].cam_type}',
-                  style: txt15,
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  'drive_type: ${result.list[index].drive_type}',
-                  style: txt15,
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  'transmission: ${result.list[index].transmission}',
-                  style: txt15,
-                ),
-              ),
-              ExpansionTile(
-                title: Text('Trim: ${result.list[index].trim.name}'),
-                subtitle: Text(
-                    "${result.list[index].trim.make_name}  ${result.list[index].trim.model_name} "),
-                children: [
-                  ListTile(
-                    title: Text(
-                      'year: ${result.list[index].trim.year}',
-                      style: txt15,
-                    ),
-                  ),
-                  ListTile(
-                    title: Text(
-                      'description: ${result.list[index].trim.description}',
-                      style: txt15,
-                    ),
-                  ),
-                  ListTile(
-                    title: Text(
-                      'msrp: ${result.list[index].trim.msrp}',
-                      style: txt15,
-                    ),
-                  ),
-                  ListTile(
-                    title: Text(
-                      'invoice: ${result.list[index].trim.invoice}',
-                      style: txt15,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          );
-        },
       );
     }
-    return central;
+
+    // Группировка по модели (make_name + model_name)
+    var groupedEngines = <String, List<Engine>>{};
+    for (var engine in result.list) {
+      String key = "${engine.trim.make_name} ${engine.trim.model_name}";
+      if (!groupedEngines.containsKey(key)) {
+        groupedEngines[key] = [];
+      }
+      groupedEngines[key]!.add(engine);
+    }
+
+    return ListView.builder(
+      itemCount: groupedEngines.keys.length,
+      itemBuilder: (context, index) {
+        String modelName = groupedEngines.keys.elementAt(index);
+        List<Engine> enginesForModel = groupedEngines[modelName]!;
+
+        return Card(
+          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 2,
+          child: ExpansionTile(
+            title: Text(
+              modelName,
+              style: txt20,
+            ),
+            children: enginesForModel.map((engine) {
+              return Column(
+                children: [
+                  _buildDetailTile('Engine Type', engine.engine_type),
+                  _buildDetailTile('Fuel Type', engine.fuel_type),
+                  _buildDetailTile('Cylinders', engine.cylinders),
+                  _buildDetailTile('Horsepower (HP)', engine.horsepower_hp),
+                  _buildDetailTile('Horsepower RPM', engine.horsepower_rpm),
+                  _buildDetailTile('Torque (ft-lbs)', engine.torque_ft_lbs),
+                  _buildDetailTile('Torque RPM', engine.torque_rpm),
+                  _buildDetailTile('Valves', engine.valves),
+                  _buildDetailTile('Valve Timing', engine.valve_timing),
+                  _buildDetailTile('Cam Type', engine.cam_type),
+                  _buildDetailTile('Drive Type', engine.drive_type),
+                  _buildDetailTile('Transmission', engine.transmission),
+                  ExpansionTile(
+                    title: Text('Trim: ${engine.trim.name}', style: txt15),
+                    children: [
+                      _buildDetailTile('Year', engine.trim.year),
+                      _buildDetailTile('Description', engine.trim.description),
+                      _buildDetailTile('MSRP', engine.trim.msrp),
+                      _buildDetailTile('Invoice', engine.trim.invoice),
+                    ],
+                  ),
+                ],
+              );
+            }).toList(),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDetailTile(String title, dynamic value) {
+    return ListTile(
+      title: Text(
+        '$title: $value',
+        style: txt15,
+      ),
+    );
   }
 }

@@ -6,6 +6,7 @@ import 'package:car_api/models/req_res.dart';
 import 'package:car_api/widget/drawer_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:number_paginator/number_paginator.dart';
 
 class CarModelsForm extends StatefulWidget {
@@ -16,7 +17,7 @@ class CarModelsForm extends StatefulWidget {
 }
 
 class _CarModelsFormState extends State<CarModelsForm> {
-  int _currentPage = 0; // Переменная для хранения текущей страницы
+  int _currentPage = 0; // Variable for storing current page
   UniqueKey _paginatorKey = UniqueKey();
 
   @override
@@ -36,25 +37,20 @@ class _CarModelsFormState extends State<CarModelsForm> {
               context.read<DataCubit>().getMakesIdFilter)
           .then(
         (value) {
-          print(value);
           context.read<DataCubit>().setModelCarRequestRes(value);
-
           central =
               GetCentralWidget(context.read<DataCubit>().getModelCarRequestRes);
-
           setState(() {});
         },
       );
     }
 
     return Scaffold(
-      // key: _scaffoldKey,
       appBar: AppBar(
         leading: Builder(
           builder: (context) {
             return IconButton(
               onPressed: () {
-                print('on_press');
                 Scaffold.of(context).openDrawer();
               },
               icon: Icon(Icons.menu_rounded),
@@ -67,64 +63,28 @@ class _CarModelsFormState extends State<CarModelsForm> {
           'Car Models',
           style: txt30,
         ),
-        // -----------  Actions start  -----------------
         actions: <Widget>[
           PopupMenuButton<int>(
             onSelected: (item) {
               if (item == 0) {
-                String yearr = context.read<DataCubit>().getYearFilter;
-                print(yearr);
-                int h2 = 0;
                 Navigator.pushNamed(context, '/YearFilterForm',
-                        arguments: yearr)
+                        arguments: context.read<DataCubit>().getYearFilter)
                     .then((value) {
                   if (value != null) {
                     context.read<DataCubit>().setYearFilter(value.toString());
-
-                    ModelCarCrud.getModelCar(
-                            '1',
-                            context.read<DataCubit>().getYearFilter,
-                            context.read<DataCubit>().getMakesIdFilter)
-                        .then((val) {
-                      context.read<DataCubit>().setModelCarRequestRes(val);
-
-                      setState(() {
-                        _currentPage = 0;
-                        _paginatorKey = UniqueKey();
-
-                        int g5 = 5;
-                      });
-                    });
+                    _refreshModels();
                   }
                 });
               } else if (item == 1) {
-                //  MakesIdFilter
-                print('MakesIdFilter');
                 Navigator.pushNamed(context, '/MakesIdFilter',
                         arguments: context.read<DataCubit>().getMakesIdFilter)
                     .then((values) {
-                  if (values != null && values.toString().trim().isNotEmpty) {
-                    if (values != null) {
-                      context
-                          .read<DataCubit>()
-                          .setMakesIdFilter(values.toString());
-
-                      ModelCarCrud.getModelCar(
-                              '1',
-                              context.read<DataCubit>().getYearFilter,
-                              context.read<DataCubit>().getMakesIdFilter)
-                          .then((val) {
-                        context.read<DataCubit>().setModelCarRequestRes(val);
-
-                        int h3 = 3;
-                        setState(() {
-                          _currentPage = 0;
-                          _paginatorKey = UniqueKey();
-                        });
-                      });
-                    }
+                  if (values != null) {
+                    context
+                        .read<DataCubit>()
+                        .setMakesIdFilter(values.toString());
+                    _refreshModels();
                   }
-                  print(values);
                 });
               }
             },
@@ -133,13 +93,8 @@ class _CarModelsFormState extends State<CarModelsForm> {
                   value: 0,
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.calendar_month,
-                        color: Colors.black,
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
+                      Icon(Icons.calendar_month, color: Colors.black),
+                      SizedBox(width: 5),
                       Text('Year'),
                     ],
                   )),
@@ -147,58 +102,33 @@ class _CarModelsFormState extends State<CarModelsForm> {
                   value: 1,
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.car_repair_sharp,
-                        color: Colors.black,
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
+                      Icon(Icons.car_repair_sharp, color: Colors.black),
+                      SizedBox(width: 5),
                       Text('Makes'),
                     ],
                   )),
             ],
           ),
         ],
-
-        // -----------  Actions end  -----------------
       ),
       drawer: DrawerMenu(),
-
-      body: BlocBuilder<DataCubit, Keeper>(builder: (context, state) {
-        return Center(
-          child: central,
-        );
-      }),
+      body: BlocBuilder<DataCubit, Keeper>(
+        builder: (context, state) {
+          return Center(child: central);
+        },
+      ),
       bottomNavigationBar: Card(
         margin: EdgeInsets.zero,
         elevation: 4,
         child: NumberPaginator(
           key: _paginatorKey,
           initialPage: _currentPage,
-          // by default, the paginator shows numbers as center content
           numberPages:
               context.read<DataCubit>().getModelCarRequestRes.pages_total,
           onPageChange: (int index) {
             setState(() {
-              _currentPage = index; // Обновление текущей страницы
-              ModelCarCrud.getModelCar(
-                      (index + 1).toString(),
-                      context.read<DataCubit>().getYearFilter,
-                      context.read<DataCubit>().getMakesIdFilter)
-                  .then(
-                (value) {
-                  print(value);
-
-                  setState(() {
-                    context.read<DataCubit>().setModelCarRequestRes(value);
-
-                    central = GetCentralWidget(
-                        context.read<DataCubit>().getModelCarRequestRes);
-                  });
-                },
-              );
-              print('indes = $index');
+              _currentPage = index;
+              _refreshModels();
             });
           },
         ),
@@ -206,65 +136,106 @@ class _CarModelsFormState extends State<CarModelsForm> {
     );
   }
 
-  //------  GetCentralWidget ----------------------------
-  Widget GetCentralWidget(ReqRes<ModelCar> result) {
-    Widget central = Text(
-      'No Data',
-      style: txt15,
-    );
+  void _refreshModels() {
+    ModelCarCrud.getModelCar(
+      (this._currentPage + 1).toString(),
+      context.read<DataCubit>().getYearFilter,
+      context.read<DataCubit>().getMakesIdFilter,
+    ).then((value) {
+      context.read<DataCubit>().setModelCarRequestRes(value);
+      setState(() {});
+    });
+  }
 
+  Widget GetCentralWidget(ReqRes<ModelCar> result) {
     if (result.list.isEmpty) {
-      if (result.status == 200) {
-        central = Text(
-          'No Data',
+      return Center(
+        child: Text(
+          result.status == 200 ? 'No Data' : result.message,
           style: txt15,
-        );
-      } else {
-        central = Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('No Data'),
-            Text(
-              result.message,
-              style: txt15,
-            ),
-          ],
-        );
-      }
-    } else {
-      central = ListView.separated(
-        separatorBuilder: (context, index) => const Divider(
-          color: Colors.black,
-          thickness: 1,
+        ),
+      );
+    }
+
+    result.list.removeWhere((item) => item.id == 0);
+    // Remove duplicates based on ID
+    result.list = result.list.toSet().toList();
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          childAspectRatio: 1,
         ),
         itemCount: result.list.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            leading: Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.blue,
-                child: Text(
-                  '${result.list[index].id}',
-                  style: txt15,
-                ),
+          return Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            elevation: 4,
+            child: InkWell(
+              onTap: () {},
+              borderRadius: BorderRadius.circular(15),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundColor:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.grey[800]
+                            : Theme.of(context).hoverColor,
+                    child: result.list[index].id.isEven
+                        ? Container(
+                            padding: EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.white.withOpacity(0.6)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(50),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.black45
+                                      : Colors.transparent,
+                                  blurRadius: 6.0,
+                                  spreadRadius: 1.0,
+                                ),
+                              ],
+                            ),
+                            child: SvgPicture.asset(
+                              'assets/icons/${result.list[index].id}',
+                              width: 50,
+                              height: 50,
+                            ),
+                          )
+                        : Icon(
+                            Icons.directions_car,
+                            size: 50,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                          ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    result.list[index].name,
+                    style: txt20,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
-            ),
-            contentPadding: EdgeInsets.zero,
-            dense: true,
-            title: Text(
-              '${result.list[index].name}',
-              style: txt20,
-            ),
-            subtitle: Text(
-              '${result.list[index].make_name}',
-              style: txt15,
             ),
           );
         },
-      );
-    }
-    return central;
+      ),
+    );
   }
 }
