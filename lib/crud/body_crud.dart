@@ -7,7 +7,7 @@ import 'package:car_api/models/req_res.dart';
 
 class BodyCrud {
   static Future<ReqRes<Body>> getBodyes(
-      String page_number, String year, String make_id) async {
+      String pageNumber, String year, String makeId) async {
     ReqRes<Body> result = ReqRes<Body>.empty();
 
     try {
@@ -18,22 +18,22 @@ class BodyCrud {
         'x-rapidapi-host': r_host
       };
 
-      Map<String, String> query_param = {
+      Map<String, String> queryParam = {
         'direction': 'asc',
         'year': year,
         'verbose': 'yes',
-        'page': page_number
+        'page': pageNumber
       };
 
-      if (make_id.trim().isNotEmpty && make_id.trim() != '0') {
-        query_param.addAll({'make_id': make_id});
+      if (makeId.trim().isNotEmpty && makeId.trim() != '0') {
+        queryParam.addAll({'make_id': makeId});
       }
 
       var response = await http.get(
           Uri.https(
             host,
             '/api/bodies',
-            query_param,
+            queryParam,
           ),
           headers: headers);
 
@@ -56,14 +56,14 @@ class BodyCrud {
         int h2 = 0;
         List<Body> list = [];
 
-        listBody.forEach((dynamic map) {
+        for (var map in listBody) {
           try {
             Body model = Body.fromJson(map);
             list.add(model);
           } catch (e) {
             print(e);
           }
-        });
+        }
 
         result.list = list;
         result.message = 'OK';

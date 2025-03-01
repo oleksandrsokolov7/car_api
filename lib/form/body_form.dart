@@ -9,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:number_paginator/number_paginator.dart';
 
 class BodyForm extends StatefulWidget {
-  const BodyForm({Key? key}) : super(key: key);
+  const BodyForm({super.key});
 
   @override
   _BodyFormState createState() => _BodyFormState();

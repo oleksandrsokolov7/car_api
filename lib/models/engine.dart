@@ -101,8 +101,7 @@ class Engine {
 
   @override
   String toString() {
-    return 'id = $id, make_model_trim_id = $make_model_trim_id, engine_type = $engine_type, fuel_type = $fuel_type, ' +
-        ' cylinders = $cylinders, size = $size, horsepower_hp = $horsepower_hp, horsepower_rpm = $horsepower_rpm, ' +
+    return 'id = $id, make_model_trim_id = $make_model_trim_id, engine_type = $engine_type, fuel_type = $fuel_type, ' ' cylinders = $cylinders, size = $size, horsepower_hp = $horsepower_hp, horsepower_rpm = $horsepower_rpm, ' +
         ' torque_ft_lbs = $torque_ft_lbs, torque_rpm = $torque_rpm, valves = $valves, valve_timing = $valve_timing, ' +
         ' cam_type = $cam_type, drive_type = $drive_type, transmission = $transmission, trim = $trim';
   }

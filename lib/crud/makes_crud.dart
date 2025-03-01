@@ -105,15 +105,15 @@ class MakesCrud {
         int h2 = 0;
         List<Makes> list = [];
 
-        listMakes.forEach((dynamic map) {
+        for (var map in listMakes) {
           Makes makes = Makes.fromJson(map);
 
           if (icons.contains(makes.name)) {
-            makes.picture = makes.name + '.svg';
+            makes.picture = '${makes.name}.svg';
           }
 
           list.add(makes);
-        });
+        }
 
         result.list = list;
         result.message = 'OK';

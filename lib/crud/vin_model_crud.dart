@@ -19,7 +19,7 @@ class VinModelCrud {
       };
 
       var response =
-          await http.get(Uri.https(host, '/api/vin/' + vin), headers: headers);
+          await http.get(Uri.https(host, '/api/vin/$vin'), headers: headers);
 
       result.status = response.statusCode;
 

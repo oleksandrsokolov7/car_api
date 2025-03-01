@@ -110,8 +110,7 @@ class Body {
 
   @override
   String toString() {
-    return 'id = $id, make_model_trim_id = $make_model_trim_id, type = $type, doors = $doors, ' +
-        ' length = $length, width = $width, seats = $seats, height = $height, wheel_base = $wheel_base, ' +
+    return 'id = $id, make_model_trim_id = $make_model_trim_id, type = $type, doors = $doors, ' ' length = $length, width = $width, seats = $seats, height = $height, wheel_base = $wheel_base, ' +
         ' front_track = $front_track, rear_track = $rear_track, ground_clearance = $ground_clearance, ' +
         ' cargo_capacity = $cargo_capacity, max_cargo_capacity = $max_cargo_capacity, curb_weight = $curb_weight ' +
         ' gross_weight = $gross_weight, max_payload = $max_payload, max_towing_capacity = $max_towing_capacity, trim = $trim ';

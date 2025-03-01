@@ -9,7 +9,7 @@ import 'package:collection/src/iterable_extensions.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class MakesIdFilter extends StatefulWidget {
-  MakesIdFilter({Key? key, required this.makerId}) : super(key: key);
+  MakesIdFilter({super.key, required this.makerId});
   String makerId = '0';
   @override
   _MakesIdFilterState createState() => _MakesIdFilterState();

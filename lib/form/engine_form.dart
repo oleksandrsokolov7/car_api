@@ -9,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:number_paginator/number_paginator.dart';
 
 class EngineForm extends StatefulWidget {
-  const EngineForm({Key? key}) : super(key: key);
+  const EngineForm({super.key});
 
   @override
   _EngineFormState createState() => _EngineFormState();

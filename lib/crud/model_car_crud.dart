@@ -9,7 +9,7 @@ import 'dart:async';
 
 class ModelCarCrud {
   static Future<ReqRes<ModelCar>> getModelCar(
-      String page_number, String year, String make_id) async {
+      String pageNumber, String year, String makeId) async {
     ReqRes<ModelCar> result = ReqRes<ModelCar>.empty();
 
     try {
@@ -20,15 +20,15 @@ class ModelCarCrud {
         'x-rapidapi-host': r_host
       };
 
-      Map<String, String> query_param = {
+      Map<String, String> queryParam = {
         'direction': 'asc',
         'year': year,
         'verbose': 'yes',
-        'page': page_number
+        'page': pageNumber
       };
 
-      if (make_id.trim().isNotEmpty && make_id.trim() != '0') {
-        query_param.addAll({'make_id': make_id});
+      if (makeId.trim().isNotEmpty && makeId.trim() != '0') {
+        queryParam.addAll({'make_id': makeId});
       }
 
       int h = 0;
@@ -37,7 +37,7 @@ class ModelCarCrud {
           Uri.https(
             host,
             '/api/models',
-            query_param,
+            queryParam,
           ),
           headers: headers);
 
@@ -60,10 +60,10 @@ class ModelCarCrud {
         int h2 = 0;
         List<ModelCar> list = [];
 
-        listModelCar.forEach((dynamic map) {
+        for (var map in listModelCar) {
           ModelCar modelCar = ModelCar.fromJson(map);
           list.add(modelCar);
-        });
+        }
 
         result.list = list;
         result.message = 'OK';

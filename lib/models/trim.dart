@@ -26,10 +26,10 @@ class Trim {
   static List<Trim> fromListJson(List<dynamic> listJson) {
     List<Trim> listTrim = [];
 
-    listJson.forEach((value) {
+    for (var value in listJson) {
       Trim trim = Trim.fromJson(value);
       listTrim.add(trim);
-    });
+    }
 
     return listTrim;
   }

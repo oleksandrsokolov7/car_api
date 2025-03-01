@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DrawerMenu extends StatefulWidget {
-  const DrawerMenu({Key? key}) : super(key: key);
+  const DrawerMenu({super.key});
 
   @override
   _DrawerMenuState createState() => _DrawerMenuState();

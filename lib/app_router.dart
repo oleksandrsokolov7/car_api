@@ -70,19 +70,19 @@ class AppRouter {
 
       //  YearFilterForm
       case '/YearFilterForm':
-        final String _year = routeSettings.arguments as String;
+        final String year = routeSettings.arguments as String;
         return MaterialPageRoute(
-          builder: (context) => YearFilterForm(year: _year),
+          builder: (context) => YearFilterForm(year: year),
         );
       //   MakesIdFilter
 
       case '/MakesIdFilter':
-        final String _makerId = routeSettings.arguments as String;
+        final String makerId = routeSettings.arguments as String;
         return MaterialPageRoute(
           builder: (context) => BlocProvider.value(
             value: cubit,
             child: MakesIdFilter(
-              makerId: _makerId,
+              makerId: makerId,
             ),
           ),
         );

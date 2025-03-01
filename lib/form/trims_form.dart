@@ -12,7 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:number_paginator/number_paginator.dart';
 
 class TrimsForm extends StatefulWidget {
-  const TrimsForm({Key? key}) : super(key: key);
+  const TrimsForm({super.key});
 
   @override
   _TrimsFormState createState() => _TrimsFormState();

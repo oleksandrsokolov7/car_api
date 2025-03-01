@@ -10,7 +10,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:number_paginator/number_paginator.dart';
 
 class CarModelsForm extends StatefulWidget {
-  const CarModelsForm({Key? key}) : super(key: key);
+  const CarModelsForm({super.key});
 
   @override
   _CarModelsFormState createState() => _CarModelsFormState();
@@ -18,7 +18,7 @@ class CarModelsForm extends StatefulWidget {
 
 class _CarModelsFormState extends State<CarModelsForm> {
   int _currentPage = 0; // Variable for storing current page
-  UniqueKey _paginatorKey = UniqueKey();
+  final UniqueKey _paginatorKey = UniqueKey();
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +138,7 @@ class _CarModelsFormState extends State<CarModelsForm> {
 
   void _refreshModels() {
     ModelCarCrud.getModelCar(
-      (this._currentPage + 1).toString(),
+      (_currentPage + 1).toString(),
       context.read<DataCubit>().getYearFilter,
       context.read<DataCubit>().getMakesIdFilter,
     ).then((value) {

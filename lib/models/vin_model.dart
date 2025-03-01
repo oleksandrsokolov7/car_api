@@ -150,8 +150,7 @@ class VinModel {
 
   @override
   String toString() {
-    return 'year = $year, make = $make, model = $model, trim = $trim, ' +
-        ' body_class = $body_class, cab_type = $cab_type, displacement_cc = $displacement_cc, ' +
+    return 'year = $year, make = $make, model = $model, trim = $trim, ' ' body_class = $body_class, cab_type = $cab_type, displacement_cc = $displacement_cc, ' +
         ' displacement_ci = $displacement_ci, displacement_l = $displacement_l, doors = $doors, ' +
         ' drive_type = $drive_type, engine_configuration = $engine_configuration, engine_model = $engine_model, ' +
         ' engine_number_of_cylinders = $engine_number_of_cylinders, number_of_seat_rows = $number_of_seat_rows, number_of_seats = $number_of_seats,  ' +

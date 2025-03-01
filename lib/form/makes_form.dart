@@ -10,7 +10,7 @@ import 'package:car_api/models/makes.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class MakesForm extends StatefulWidget {
-  const MakesForm({Key? key}) : super(key: key);
+  const MakesForm({super.key});
 
   @override
   _MakesFormState createState() => _MakesFormState();

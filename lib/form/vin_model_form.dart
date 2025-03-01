@@ -10,7 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class VinModelForm extends StatefulWidget {
-  const VinModelForm({Key? key}) : super(key: key);
+  const VinModelForm({super.key});
 
   @override
   _VinModelFormState createState() => _VinModelFormState();

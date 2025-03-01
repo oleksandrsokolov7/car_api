@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
   final AppTheme initialTheme;
   final AppRouter _appRouter = AppRouter();
 
-  MyApp({required this.initialTheme});
+  MyApp({super.key, required this.initialTheme});
 
   @override
   Widget build(BuildContext context) {
