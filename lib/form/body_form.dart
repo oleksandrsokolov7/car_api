@@ -19,6 +19,20 @@ class _BodyFormState extends State<BodyForm> {
   int _currentPage = 0;
   UniqueKey _paginatorKey = UniqueKey();
 
+  // Функция для фильтрации повторяющихся элементов
+  List<Body> removeDuplicates(List<Body> list) {
+    Set<String> seen = Set();
+    List<Body> uniqueList = [];
+    for (var body in list) {
+      if (!seen.contains(body.trim.make_name)) {
+        // Проверяем по названию модели
+        seen.add(body.trim.make_name);
+        uniqueList.add(body);
+      }
+    }
+    return uniqueList;
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget central = context.read<DataCubit>().getBodyReqRes.message.isEmpty
@@ -138,49 +152,52 @@ class _BodyFormState extends State<BodyForm> {
       );
     }
 
+    // Убираем дубликаты с помощью фильтрации
+    List<Body> uniqueList = removeDuplicates(result.list);
+
     return ListView.separated(
       separatorBuilder: (context, index) =>
           const Divider(color: Colors.black, thickness: 1),
-      itemCount: result.list.length,
+      itemCount: uniqueList.length, // Используем уникальный список
       itemBuilder: (context, index) {
+        final body = uniqueList[index];
         return Card(
           margin: const EdgeInsets.all(8.0),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           elevation: 4,
           child: ExpansionTile(
-            title: Text(
-                "${result.list[index].trim.make_name} ${result.list[index].trim.model_name}"),
+            title: Text("${body.trim.make_name} ${body.trim.model_name}"),
             children: [
-              _buildListTile('Type', result.list[index].type),
-              _buildListTile('Doors', result.list[index].doors),
-              _buildListTile('Length', result.list[index].length),
-              _buildListTile('Seats', result.list[index].seats),
-              _buildListTile('Height', result.list[index].height),
-              _buildListTile('Wheel Base', result.list[index].wheel_base),
-              _buildListTile('Front Track', result.list[index].front_track),
-              _buildListTile('Rear Track', result.list[index].rear_track),
-              _buildListTile(
-                  'Ground Clearance', result.list[index].ground_clearance),
-              _buildListTile(
-                  'Cargo Capacity', result.list[index].cargo_capacity),
-              _buildListTile(
-                  'Max Cargo Capacity', result.list[index].max_cargo_capacity),
-              _buildListTile('Curb Weight', result.list[index].curb_weight),
-              _buildListTile('Gross Weight', result.list[index].gross_weight),
-              _buildListTile('Max Payload', result.list[index].max_payload),
-              _buildListTile('Max Towing Capacity',
-                  result.list[index].max_towing_capacity),
+              PropertyTile(title: 'Type', value: body.type),
+              PropertyTile(title: 'Doors', value: body.doors),
+              PropertyTile(title: 'Length', value: body.length),
+              PropertyTile(title: 'Seats', value: body.seats),
+              PropertyTile(title: 'Height', value: body.height),
+              PropertyTile(title: 'Wheel Base', value: body.wheel_base),
+              PropertyTile(title: 'Front Track', value: body.front_track),
+              PropertyTile(title: 'Rear Track', value: body.rear_track),
+              PropertyTile(
+                  title: 'Ground Clearance', value: body.ground_clearance),
+              PropertyTile(title: 'Cargo Capacity', value: body.cargo_capacity),
+              PropertyTile(
+                  title: 'Max Cargo Capacity', value: body.max_cargo_capacity),
+              PropertyTile(title: 'Curb Weight', value: body.curb_weight),
+              PropertyTile(title: 'Gross Weight', value: body.gross_weight),
+              PropertyTile(title: 'Max Payload', value: body.max_payload),
+              PropertyTile(
+                  title: 'Max Towing Capacity',
+                  value: body.max_towing_capacity),
               ExpansionTile(
-                title: Text('Trim: ${result.list[index].trim.name}'),
-                subtitle: Text(
-                    "${result.list[index].trim.make_name} ${result.list[index].trim.model_name}"),
+                title: Text('Trim: ${body.trim.name}'),
+                subtitle:
+                    Text("${body.trim.make_name} ${body.trim.model_name}"),
                 children: [
-                  _buildListTile('Year', result.list[index].trim.year),
-                  _buildListTile(
-                      'Description', result.list[index].trim.description),
-                  _buildListTile('MSRP', result.list[index].trim.msrp),
-                  _buildListTile('Invoice', result.list[index].trim.invoice),
+                  PropertyTile(title: 'Year', value: body.trim.year),
+                  PropertyTile(
+                      title: 'Description', value: body.trim.description),
+                  PropertyTile(title: 'MSRP', value: body.trim.msrp),
+                  PropertyTile(title: 'Invoice', value: body.trim.invoice),
                 ],
               ),
             ],
@@ -191,6 +208,22 @@ class _BodyFormState extends State<BodyForm> {
   }
 
   ListTile _buildListTile(String title, dynamic value) {
+    return ListTile(
+      title: Text('$title: $value', style: txt15),
+    );
+  }
+}
+
+// Виджет для вывода свойств модели
+class PropertyTile extends StatelessWidget {
+  final String title;
+  final dynamic value;
+
+  const PropertyTile({Key? key, required this.title, required this.value})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return ListTile(
       title: Text('$title: $value', style: txt15),
     );
