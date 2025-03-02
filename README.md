@@ -29,5 +29,5 @@
 ## 🚀 **Как запустить проект**  
 1. **Клонировать репозиторий**  
    ```sh
-   git clone https://github.com/username/car_api_app.git  
+   git clone (https://github.com/oleksandrsokolov7/car_api.git)  
    cd car_api_app  
